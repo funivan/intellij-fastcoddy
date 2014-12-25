@@ -1,0 +1,116 @@
+<idea-plugin version="2">
+    <name>Coddy</name>
+    <description><![CDATA[
+        Improve your productivity.
+
+        Author: Ivan Shcherbak dev@funivan.com
+    ]]></description>
+    <version>0.4.1</version>
+    <vendor url="http://funivan.com/" email="dev@funivan.com">funivan.com</vendor>
+    <idea-version since-build="138.184"/>
+
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+    <change-notes><![CDATA[
+
+        <h2>0.4.1</h2>
+        <ul>
+            <li>Refactoring</li>
+        </ul>
+
+        <h2>0.4</h2>
+        <ul>
+            <li>File based templates</li>
+            <li>Custom variables</li>
+            <li>Statistic</li>
+        </ul>
+
+        <h2>0.3.4</h2>
+        <ul>
+            <li>Fix bug in latest EAP 138.184</li>
+        </ul>
+
+        <h2>0.3.3</h2>
+        <ul>
+            <li>Change stored directory</li>
+        </ul>
+
+        <h2>0.3.2</h2>
+        <ul>
+            <li>Change default keystroke. Ctrl+BACK_SLASH (ctrl \) </li>
+            <li>Fix small bugs</li>
+        </ul>
+
+        <h2>0.3.1</h2>
+        <ul>
+            <li>Fix bug with replacement variables.</li>
+        </ul>
+        <h2>0.3</h2>
+        <ul>
+            <li>Add button for reload configuration. Add action reload configuration to menu</li>
+        </ul>
+
+        <h2>0.2</h2>
+        <ul>
+            <li>Create general configuration</li>
+        </ul>
+        <h2>0.1</h2>
+        <ul>
+            <li>Start. At this point support only php context</li>
+        </ul>
+
+    ]]></change-notes>
+
+
+    <actions>
+        <action id="Coddy.Expand" class="org.funivan.Coddy.Actions.ExpandAction" text="Expand code"
+                description="Expand smart short code">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control BACK_SLASH"/>
+        </action>
+        <action id="Coddy.ReloadConfiguration" class="org.funivan.Coddy.Idea.Actions.ReloadAction"
+                text="Reload Coddy plugin"
+                description="Reload Coddy plugin configuration ">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <applicationService  serviceImplementation="org.funivan.Coddy.Productivity.UsageStatistic"/>
+
+
+        <tipAndTrick file="TemplateInvoke.html"/>
+
+        <projectConfigurable instance="org.funivan.Coddy.Project.SettingsForm" id="Coddy.Project.SettingsForm"
+                             displayName="Fast Coding Plugin"/>
+
+        <projectService serviceImplementation="org.funivan.Coddy.Project.Settings"/>
+
+
+        <!--- General plugin settings -->
+        <applicationConfigurable instance="org.funivan.Coddy.General.SettingsForm" id="Coddy.General.SettingsForm"
+                                 displayName="Fast Coding Plugin"/>
+
+
+        <applicationService serviceImplementation="org.funivan.Coddy.General.AppSettingsService"/>
+
+        <productivityFeaturesProvider implementation="org.funivan.Coddy.Productivity.TemplatesProductivityFeatureProvider"/>
+
+    </extensions>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.jetbrains.php</depends>
+
+
+    <module-components>
+        <component>
+            <implementation-class>org.funivan.Coddy.Component</implementation-class>
+        </component>
+    </module-components>
+</idea-plugin>

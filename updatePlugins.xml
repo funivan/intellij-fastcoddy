@@ -1,0 +1,12 @@
+<?php
+    $version = '';
+   $version = preg_replace('!^.*<version>([0-9\.]+)</version>.*$!sm', '$1', file_get_contents(__DIR__.'/META-INF/plugin.xml'));
+
+?>
+<plugins>
+    <plugin
+            id="Coddy"
+            url="http://localhost/plugins/Coddy/Coddy.jar"
+            version="<?= $version ?>" />
+
+</plugins>
