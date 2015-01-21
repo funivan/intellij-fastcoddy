@@ -1,27 +1,27 @@
 <idea-plugin version="2">
-    <name>Coddy</name>
+    <name>FastCoddy</name>
     <description><![CDATA[
         Improve your productivity.
 
         Author: Ivan Shcherbak dev@funivan.com
     ]]></description>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <vendor url="http://funivan.com/" email="dev@funivan.com">funivan.com</vendor>
     <idea-version since-build="138.184"/>
 
-    <application-components>
-        <!-- Add your application components here -->
-    </application-components>
 
-    <project-components>
-        <!-- Add your project components here -->
-    </project-components>
     <change-notes><![CDATA[
+
+        <h2>0.4.2</h2>
+        <ul>
+            <li>Rewrite tab detection</li>
+        </ul>
 
         <h2>0.4.1</h2>
         <ul>
             <li>Refactoring</li>
         </ul>
+
 
         <h2>0.4</h2>
         <ul>
@@ -66,51 +66,69 @@
 
     ]]></change-notes>
 
+    <depends>com.intellij.modules.platform</depends>
 
     <actions>
-        <action id="Coddy.Expand" class="org.funivan.Coddy.Actions.ExpandAction" text="Expand code"
+        <action id="FastCoddy.Expand" class="org.funivan.intellij.FastCoddy.LanguageProcessor.ExpandAction" text="Expand code"
                 description="Expand smart short code">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="control BACK_SLASH"/>
         </action>
-        <action id="Coddy.ReloadConfiguration" class="org.funivan.Coddy.Idea.Actions.ReloadAction"
-                text="Reload Coddy plugin"
-                description="Reload Coddy plugin configuration ">
+        <action id="FastCoddy.ReloadConfiguration" class="org.funivan.intellij.FastCoddy.Actions.ReloadAction"
+                text="Reload FastCoddy plugin"
+                description="Reload FastCoddy plugin configuration ">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <applicationService  serviceImplementation="org.funivan.Coddy.Productivity.UsageStatistic"/>
+
+        <productivityFeaturesProvider
+                implementation="org.funivan.intellij.FastCoddy.Productivity.TemplatesProductivityFeatureProvider"/>
+
+
+        <applicationService serviceImplementation="org.funivan.intellij.FastCoddy.Productivity.UsageStatistic"/>
 
 
         <tipAndTrick file="TemplateInvoke.html"/>
 
-        <projectConfigurable instance="org.funivan.Coddy.Project.SettingsForm" id="Coddy.Project.SettingsForm"
-                             displayName="Fast Coding Plugin"/>
+        <projectConfigurable instance="org.funivan.intellij.FastCoddy.Settings.ProjectSettingsForm"
+                             id="FastCoddy.Project.SettingsForm"
+                             displayName="FastCoddy plugin"/>
 
-        <projectService serviceImplementation="org.funivan.Coddy.Project.Settings"/>
+        <projectService serviceImplementation="org.funivan.intellij.FastCoddy.Settings.ProjectSettings"/>
 
 
         <!--- General plugin settings -->
-        <applicationConfigurable instance="org.funivan.Coddy.General.SettingsForm" id="Coddy.General.SettingsForm"
-                                 displayName="Fast Coding Plugin"/>
+        <applicationConfigurable instance="org.funivan.intellij.FastCoddy.Settings.PluginSettingsForm"
+                                 id="FastCoddy.General.SettingsForm"
+                                 displayName="FastCoddy Plugin"/>
 
 
-        <applicationService serviceImplementation="org.funivan.Coddy.General.AppSettingsService"/>
+        <applicationService serviceImplementation="org.funivan.intellij.FastCoddy.Settings.PluginSettings"/>
 
-        <productivityFeaturesProvider implementation="org.funivan.Coddy.Productivity.TemplatesProductivityFeatureProvider"/>
 
     </extensions>
 
-    <depends>com.intellij.modules.platform</depends>
-    <depends>com.jetbrains.php</depends>
 
+    <application-components>
+        <component>
+            <implementation-class>
+                org.funivan.intellij.FastCoddy.Productivity.TemplatesProductivityFeatureProvider
+            </implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>org.funivan.intellij.FastCoddy.CoddyProjectComponent</implementation-class>
+        </component>
+    </project-components>
 
     <module-components>
         <component>
-            <implementation-class>org.funivan.Coddy.Component</implementation-class>
+            <implementation-class>org.funivan.intellij.FastCoddy.CoddyModuleComponent</implementation-class>
         </component>
     </module-components>
 </idea-plugin>

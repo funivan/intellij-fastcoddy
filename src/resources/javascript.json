@@ -1,0 +1,17 @@
+{
+  items : [
+    {
+      group: 'if',
+      shortcut: '(eli|if)',
+      expand: ' $1($TAB1$){$TAB2$}',
+      isRegex: true,
+      regexpReplaces: {
+        'eli': 'else if'
+      },
+      tabs: {
+        TAB2: []
+      }
+    }
+
+  ]
+}

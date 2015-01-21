@@ -5,8 +5,8 @@
 ?>
 <plugins>
     <plugin
-            id="Coddy"
-            url="http://localhost/plugins/Coddy/Coddy.jar"
+            id="FastCoddy"
+            url="http://localhost/FastCoddy/intellij-plugin/FastCoddy.jar"
             version="<?= $version ?>" />
 
 </plugins>

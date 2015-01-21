@@ -2,10 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/../Coddy/src/org/funivan/intellij/Coddy/CodeBuilders/Configuration/TemplateItem.java" />
-      <file url="file://$PROJECT_DIR$/../Coddy/src/org/funivan/intellij/Coddy/Idea/ShortCut.java" />
-    </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
@@ -16,6 +12,7 @@
       <entry name="!?*.flex" />
       <entry name="!?*.kt" />
       <entry name="!?*.clj" />
+      <entry name="?*.json" />
     </wildcardResourcePatterns>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="false">
