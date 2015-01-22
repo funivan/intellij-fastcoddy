@@ -141,7 +141,7 @@
     },
     {
       group: 'variable_handling',
-      shortcut: '(\!)?(iso|isf|isd|isa|isi|isn|isc|in|i|e)',
+      shortcut: '(\!)?(iso|isf|isd|isa|isi|isn|isc|iss|in|i|e)',
       expand: ' $1$2($TAB1$) $TAB2$',
       isRegex: true,
       tabs: {
@@ -155,6 +155,7 @@
         'isc': 'is_callable',
         'isi': 'is_integer',
         'isn': 'is_numeric',
+        'iss': 'is_string',
         'in' : 'in_array',
         'i': 'isset',
         'e': 'empty'
@@ -223,7 +224,6 @@
         'pub': 'public',
         'pro': 'protected',
         'pri': 'private',
-        's': 'static',
         'f': 'final'
       }
     },
