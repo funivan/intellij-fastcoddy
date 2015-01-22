@@ -5,13 +5,18 @@
 
         Author: Ivan Shcherbak dev@funivan.com
     ]]></description>
-    <version>0.4.2</version>
+    <version>0.4.3</version>
     <vendor url="http://funivan.com/" email="dev@funivan.com">funivan.com</vendor>
     <idea-version since-build="138.184"/>
 
 
     <change-notes><![CDATA[
 
+        <h2>0.4.3</h2>
+        <ul>
+            <li>Fix small bugs in php template configuration.</li>
+            <li>Add iss - isstring</li>
+        </ul>
         <h2>0.4.2</h2>
         <ul>
             <li>Rewrite tab detection</li>
