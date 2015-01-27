@@ -1,5 +1,6 @@
 package org.funivan.intellij.FastCoddy.LanguageProcessor;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -10,11 +11,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.funivan.intellij.FastCoddy.Actions.InsertLiveTemplateAction;
+import org.funivan.intellij.FastCoddy.CoddyProjectComponent;
+import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
 import org.funivan.intellij.FastCoddy.Productivity.UsageStatistic;
-import org.funivan.intellij.FastCoddy.CoddyProjectComponent;
 import org.funivan.intellij.FastCoddy.Settings.ProjectSettings;
 
 import java.util.Map;
@@ -50,10 +51,21 @@ public class ExpandAction extends AnAction {
 
         VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
         PsiFile psiFile = PsiManager.getInstance(editor.getProject()).findFile(virtualFile);
-        PsiElement el = psiFile.findElementAt(editor.getCaretModel().getOffset() - 1);
+        int offset = editor.getCaretModel().getOffset() - 1;
+
+        PsiElement el = psiFile.findElementAt(offset);
 
         if (el == null) {
             return;
+        }
+
+        String languageId = el.getLanguage().getID();
+
+
+        // check if we have injected part of string
+        PsiElement injectedElementAt = InjectedLanguageManager.getInstance(psiFile.getProject()).findInjectedElementAt(psiFile, offset);
+        if (injectedElementAt != null && injectedElementAt.getLanguage() != null) {
+            languageId = injectedElementAt.getLanguage().getID();
         }
 
 
@@ -65,9 +77,7 @@ public class ExpandAction extends AnAction {
 
         Map<String, CodeExpandInterface> codeExpands = c.getCodeExpand();
 
-        String languageId = el.getLanguage().getID();
-
-
+        System.out.println("languageId::" + languageId);
         CodeExpandInterface codeExpandAction = codeExpands.get(languageId);
         if (codeExpandAction == null) {
             System.out.println("empty codeExpandActions for language:" + languageId);
@@ -76,7 +86,7 @@ public class ExpandAction extends AnAction {
 
         // remember current state
         String initialSelectedText = editor.getSelectionModel().getSelectedText();
-        int initialOffset = editor.getCaretModel().getOffset();
+        int initialOffset = offset+1;
         System.out.println("save:" + initialOffset);
         CodeTemplate newCodeTemplate = codeExpandAction.getCode(anActionEvent);
         if (newCodeTemplate == null || newCodeTemplate.isEmpty()) {
@@ -91,10 +101,20 @@ public class ExpandAction extends AnAction {
             return;
         }
 
-//        System.out.println("newCodeTemplate" + newCodeTemplate);
+
+
+        
+        System.out.println("newCodeTemplate" + newCodeTemplate);
+
         IntellijLiveTemplate template = new IntellijLiveTemplate(newCodeTemplate);
         InsertLiveTemplateAction insertAction = new InsertLiveTemplateAction(template, el, editor);
+
+        System.out.println("stage 0");
         insertAction.run();
+        System.out.println("stage 1 ");
+
+
+        System.out.println("change data:" + initialOffset);
 
         UsageStatistic.used();
         UsageStatistic.usedShortCodes(newCodeTemplate.getUsedShortCodesNum());

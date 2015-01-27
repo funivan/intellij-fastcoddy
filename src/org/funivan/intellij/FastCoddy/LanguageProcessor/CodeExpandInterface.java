@@ -11,5 +11,9 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
  * To change this template use File | SettingsService | File Templates.
  */
 public interface CodeExpandInterface {
+    
     public CodeTemplate getCode(AnActionEvent anActionEvent);
+
+    public String[] getDelimiterSymbols();
+    
 }

@@ -9,7 +9,7 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
 
 /**
  * @author funivan <dev@funivan.com>
- * Date: 12/24/13
+ *         Date: 12/24/13
  */
 public class InsertLiveTemplateAction {
 
@@ -30,14 +30,18 @@ public class InsertLiveTemplateAction {
             public void run() {
                 CommandProcessor.getInstance().executeCommand(el.getProject(), new Runnable() {
                     public void run() {
-                        editor.getDocument().deleteString(
-                                editor.getSelectionModel().getSelectionStart(),
-                                editor.getSelectionModel().getSelectionEnd()
-                        );
+
+                        System.out.println("deletion start");
+
+                        int selectionStart = editor.getSelectionModel().getSelectionStart();
+                        int selectionEnd = editor.getSelectionModel().getSelectionEnd();
+
 
                         CustomTemplateCallback customTemplateCallback = new CustomTemplateCallback(editor, el.getContainingFile());
 
                         template.expandTemplate(customTemplateCallback);
+                        // delete our shortcut
+                        editor.getDocument().deleteString(selectionStart, selectionEnd);
                     }
                 }, "Expand custom template", "CUSTOM_TEMPLATE_GENERATOR");
             }

@@ -104,7 +104,7 @@
         '|': 'or'
       },
       tabs: {
-        TAB1: [ 'variable_handling' ]
+        TAB1: [ 'variable_handling', 'preg_match_fn' ]
       }
     },
     {
@@ -135,7 +135,7 @@
       },
       tabs: {
         END: [ 'class_method', 'if' ],
-        TAB1: [  'variable_handling', 'logical_operators' ],
+        TAB1: [  'variable_handling', 'preg_match_fn', 'logical_operators' ],
         TAB2: []
       }
     },
@@ -154,13 +154,71 @@
         'isa': 'is_array',
         'isc': 'is_callable',
         'isi': 'is_integer',
-        'isn': 'is_numeric',
+        'isn': 'is_null',
         'iss': 'is_string',
         'in' : 'in_array',
         'i': 'isset',
         'e': 'empty'
       }
     },
+    {
+      group: 'preg_match_fn',
+      shortcut: '(prma|prm)',
+      expand: '$1(\'!$VAR_REGEXP$!\', $VAR_SUBJECT$, $VAR_MATCHED$)',
+      isRegex: true,
+      regexpReplaces: {
+        'prma':'preg_match_all',
+        'prm':'preg_match'
+      },
+      vars : {
+          VAR_SUBJECT: {
+            expression : "complete()",
+            alwaysStopAt : true
+          },
+          VAR_MATCHED: {
+            defaultValue : '"$matchedData"',
+            alwaysStopAt : true
+          }
+        }
+    },
+    {
+      group: 'preg_replace_callback_fn',
+      shortcut: 'prrc',
+      expand: '$VAR_SUBJECT$ = preg_replace_callback(\'!$VAR_REGEXP$!\', function($matches){\n$VAR_TO$\n} ,$VAR_SUBJECT$)',
+      vars : {
+          VAR_REGEXP :{
+            alwaysStopAt : true
+          },
+          VAR_SUBJECT: {
+            expression : "complete()",
+            alwaysStopAt : true
+          },
+          VAR_TO: {
+            defaultValue: '"return $matches[0];"',
+            alwaysStopAt : true
+          }
+        }
+    },
+
+    {
+      group: 'preg_replace_fn',
+      shortcut: 'prr',
+      expand: '$VAR_SUBJECT$ = preg_replace(\'!$VAR_REGEXP$!\', $VAR_TO$ ,$VAR_SUBJECT$)',
+      vars : {
+          VAR_REGEXP :{
+            alwaysStopAt : true
+          },
+          VAR_SUBJECT: {
+            expression : "complete()",
+            alwaysStopAt : true
+          },
+          VAR_TO: {
+            defaultValue : '"\'\'"',
+            alwaysStopAt : true
+          }
+        }
+    },
+    
     {
       group: 'variable_handling',
       shortcut: 'c([!=<>0-9]*)',
@@ -176,31 +234,36 @@
     },
     {
       shortcut: 'fork',
-      expand: 'foreach($$VAR_ARRAY$ as $$VAR_KEY$=>$$VAR_VALUE$){\n$TAB4$\n}',
+      expand: 'foreach($$VAR_ARRAY$ as $VAR_KEY$=>$VAR_VALUE$){\n$TAB4$\n}',
       tabs: {
         TAB4: []
       },
       vars : {
         VAR_ARRAY: {
-            expression : "completeSmart()"
+          expression : "complete()",
+          alwaysStopAt : true
         },
         VAR_KEY: {
-          defaultValue : "$key"
+          defaultValue : '"$key"',
+          alwaysStopAt : true
         },
         VAR_VALUE: {
-          defaultValue : "$value"
+          defaultValue : '"$value"',
+          alwaysStopAt : true
         }
       }
     },
     {
       shortcut: 'for',
-      expand: 'foreach ($$VAR_ARRAY$ as $$VAR_VARIABLE$){\n$TAB1$\n}\n',
+      expand: 'foreach ($VAR_ARRAY$ as $VAR_VARIABLE$){\n$TAB1$\n}\n',
       vars : {
           VAR_ARRAY : {
-            expression : "completeSmart()"
+            expression : "complete()",
+            alwaysStopAt : true
           },
-          VAR_VALUE: {
-            defaultValue : "$value"
+          VAR_VARIABLE: {
+            defaultValue : '"$value"',
+            alwaysStopAt : true
           }
       },
       tabs: {
@@ -256,6 +319,16 @@
         END: [ 'class_method' ],
         TAB2: [  'variable_handling', 'logical_operators' ],
         TAB1: [ ]
+      }
+    }
+    ,
+    {
+      group: ':function',
+      shortcut: 'fn',
+      expand: 'function($TAB1$){\n$TAB2$\n}',
+      tabs: {
+        END: [ 'class_method' ],
+        TAB2: [ ]
       }
     }
     ,

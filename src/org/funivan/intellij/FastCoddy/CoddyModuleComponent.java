@@ -32,8 +32,8 @@ public class CoddyModuleComponent implements ModuleComponent {
     private static final String TEMPLATE_LOCATION = "/resources";
 
     public void initComponent() {
-//        copyTemplateFiles(SKIP_REWRITE_FILES);
-        copyTemplateFiles(FORCE_REWRITE_FILES);
+        copyTemplateFiles(SKIP_REWRITE_FILES); // in production mode
+//        copyTemplateFiles(FORCE_REWRITE_FILES); // in debug mode
     }
 
     public static void copyTemplateFiles(Boolean forceRewrite) {
@@ -50,7 +50,7 @@ public class CoddyModuleComponent implements ModuleComponent {
 
         copyTemplate(forceRewrite, "php.json");
         copyTemplate(forceRewrite, "javascript.json");
-
+        copyTemplate(forceRewrite, "xpath.json");
 
     }
 
@@ -62,11 +62,9 @@ public class CoddyModuleComponent implements ModuleComponent {
         File destinationFile = new File(PluginSettings.DEFAULT_FULL_PATH + "/" + fileName);
 
         if (destinationFile.isFile() && forceRewrite == false) {
-//            System.out.println("FastCoddy.:: SKIP " + phpFileName + " to " + destinationFile);
             return;
         }
 
-//        System.out.println("FastCoddy.:: File copy from " + phpFileName + " to " + destinationFile);
         try {
             Files.copy(is, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {

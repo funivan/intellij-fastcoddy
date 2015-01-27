@@ -6,7 +6,9 @@ import com.intellij.util.containers.HashMap;
 import org.codehaus.jettison.json.JSONException;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilder;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandInterface;
+import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.JavaScriptCodeExpandProcessor;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.PhpCodeExpandProcessor;
+import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.XPathCodeExpandProcessor;
 import org.funivan.intellij.FastCoddy.Settings.PluginSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,13 +56,19 @@ public class CoddyProjectComponent implements ProjectComponent {
 
             phpCodeBuilder.loadConfigFromFile(PluginSettings.getSettings().configurationDirectory + "/php.json", "");
             phpCodeBuilder.loadConfigFromFile(project.getWorkspaceFile().getParent().getPath() + "/fast-coddy/php.json", project.getBaseDir().getPath());
-            codeExpands.put("PHP", new PhpCodeExpandProcessor().setCodeBuilder(phpCodeBuilder));
+            codeExpands.put("PHP", new PhpCodeExpandProcessor(phpCodeBuilder));
+
+
+            CodeBuilder xpathCodeBuilder = new CodeBuilder();
+            xpathCodeBuilder.loadConfigFromFile(PluginSettings.getSettings().configurationDirectory + "/xpath.json", "");
+            xpathCodeBuilder.loadConfigFromFile(project.getWorkspaceFile().getParent().getPath() + "/fast-coddy/xpath.json", project.getBaseDir().getPath());
+            codeExpands.put("XPath", new XPathCodeExpandProcessor(xpathCodeBuilder));
 
             // load global configuration
             CodeBuilder javascriptCodeBuilder = new CodeBuilder();
             javascriptCodeBuilder.loadConfigFromFile(PluginSettings.getSettings().configurationDirectory + "/javascript.json", "");
             javascriptCodeBuilder.loadConfigFromFile(project.getWorkspaceFile().getParent().getPath() + "/fast-coddy/javasript.json", project.getBaseDir().getPath());
-            codeExpands.put("JavaScript", new PhpCodeExpandProcessor().setCodeBuilder(javascriptCodeBuilder));
+            codeExpands.put("JavaScript", new JavaScriptCodeExpandProcessor(javascriptCodeBuilder));
 
         } catch (JSONException e) {
             e.printStackTrace();

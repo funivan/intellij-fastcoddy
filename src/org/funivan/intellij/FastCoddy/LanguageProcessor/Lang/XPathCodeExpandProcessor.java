@@ -4,17 +4,22 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilderInterface;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandProcessor;
 
 /**
- * Created by ivan on 7/31/14.
+ * Created with IntelliJ IDEA.
+ * User: ivan
+ * Date: 12/25/13
+ * Time: 10:24 AM
  */
-public class JavaScriptCodeExpandProcessor extends CodeExpandProcessor {
+public class XPathCodeExpandProcessor extends CodeExpandProcessor {
 
 
-    public JavaScriptCodeExpandProcessor(CodeBuilderInterface codeBuilder) {
+    public XPathCodeExpandProcessor(CodeBuilderInterface codeBuilder) {
         super(codeBuilder);
     }
 
     @Override
     public String[] getDelimiterSymbols() {
-        return new String[]{" ", "("};
+        return new String[]{" ", "[", "]", "/", "*"};
     }
+    
 }
+

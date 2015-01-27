@@ -7,8 +7,10 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.PsiFile;
-import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilderInterface;
+import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
+
+import java.util.Arrays;
 
 /**
  * User: ivan
@@ -18,12 +20,12 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilderInterface;
  */
 public abstract class CodeExpandProcessor implements CodeExpandInterface {
 
-    protected CodeBuilderInterface codeBuilder;
+    public CodeBuilderInterface codeBuilder;
+    protected String[] delimiterSymbols;
 
-
-    public final CodeExpandProcessor setCodeBuilder(CodeBuilderInterface codeBuilder) {
+    public CodeExpandProcessor(CodeBuilderInterface codeBuilder) {
         this.codeBuilder = codeBuilder;
-        return this;
+        this.delimiterSymbols = getDelimiterSymbols();
     }
 
     public final CodeBuilderInterface getCodeBuilder() {
@@ -47,18 +49,16 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
     }
 
     /**
-     *
-     *
      * if we have following code
      * ```
      * if(<CURSOR>){
-     *
+     * <p/>
      * }
      * ```
      * We type `!e&isf` Then our code is
      * ```
      * if(!e&isf){
-     *
+     * <p/>
      * }
      * ```
      * This method detect typed short code and return `!e&isf`
@@ -96,8 +96,8 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
                 selectionMode.setSelection(leftPosition, rightPosition);
                 shortCode = selectionMode.getSelectedText();
 
-                String firstSymbol = shortCode.substring(0, 1);
-                if (firstSymbol.equals(" ") || firstSymbol.equals("(")) {
+                String symbol = shortCode.substring(0, 1);
+                if (validSymbolForCapture(symbol) == false) {
                     captureItem = false;
                     selectionMode.setSelection(leftPosition + 1, rightPosition);
                 }
@@ -113,4 +113,15 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
         }
         return shortCode;
     }
+
+
+    protected Boolean validSymbolForCapture(String symbol) {
+
+        if (Arrays.asList(this.delimiterSymbols).contains(symbol.toString())) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

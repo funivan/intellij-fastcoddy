@@ -1,0 +1,33 @@
+{
+  items: [
+    {
+      group: 'function',
+      shortcut: 'co',
+      expand: 'contains($TAB1$, "$TAB2$")]',
+      tabs: {
+        TAB1: ['attributes']
+      }
+    },
+    {
+      group: 'node_property',
+      shortcut: '([a-z]+|):',
+      isRegexp: true,
+      expand: '$1[$TAB1$]',
+      tabs: {
+        TAB1: [ 'function', 'attributes' ]
+      }
+    },
+    {
+      group: 'attributes',
+      shortcut: '@(i|c|t|n)',
+      expand: '$1',
+      isRegex: true,
+      regexpReplaces: {
+        'i': '@id',
+        'c': '@class',
+        't': 'text()',
+        'n': '.'
+      }
+    }
+  ]
+}

@@ -163,6 +163,9 @@ public class CodeBuilder implements CodeBuilderInterface {
         do {
 
             leftPreviousIndexes--;
+            if (leftPreviousIndexes < 0) {
+                break;
+            }
 
             LocalShortcutItem previousLocalShortcutItem = shortCodeConfiguration.get(leftPreviousIndexes);
 
@@ -285,7 +288,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                             String groupString = matcher.group(groupIndex);
 
 
-                            groupString = ( groupString != null ) ? groupString : "";
+                            groupString = (groupString != null) ? groupString : "";
 
 
                             if (groupIndex == groupsNum) {
