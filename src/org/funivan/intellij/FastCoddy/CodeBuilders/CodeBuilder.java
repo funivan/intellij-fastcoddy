@@ -180,7 +180,13 @@ public class CodeBuilder implements CodeBuilderInterface {
                     Iterator keys = tabs.keySet().iterator();
 
                     Boolean detectPosition = false;
-
+                    
+                    
+                    if(insertPosition.equals("")==false){
+                        detectPosition = true;
+                        break;
+                    }
+                    
                     while (keys.hasNext() && detectPosition == false) {
                         String tabIndex = (String) keys.next();
                         String[] currentTabGroups = tabs.get(tabIndex);
@@ -194,10 +200,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                             System.out.println("prevIndex:" + prevIndex);
                             Integer testIndex = leftPreviousIndexes + prevIndex - 1;
                             System.out.println("testIndex :" + testIndex);
-
-                            insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
-                            detectPosition = true;
-                            break;
+                            insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";                           
                         } else {
                             for (int i = 0; i < currentTabGroups.length; i++) {
                                 String placeToGroup = currentTabGroups[i];
