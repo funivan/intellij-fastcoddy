@@ -50,6 +50,11 @@ public class ExpandAction extends AnAction {
 
 
         VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
+
+        if (virtualFile == null) {
+            return;
+        }
+
         PsiFile psiFile = PsiManager.getInstance(editor.getProject()).findFile(virtualFile);
         int offset = editor.getCaretModel().getOffset() - 1;
 
@@ -86,7 +91,7 @@ public class ExpandAction extends AnAction {
 
         // remember current state
         String initialSelectedText = editor.getSelectionModel().getSelectedText();
-        int initialOffset = offset+1;
+        int initialOffset = offset + 1;
         System.out.println("save:" + initialOffset);
         CodeTemplate newCodeTemplate = codeExpandAction.getCode(anActionEvent);
         if (newCodeTemplate == null || newCodeTemplate.isEmpty()) {
@@ -102,8 +107,6 @@ public class ExpandAction extends AnAction {
         }
 
 
-
-        
         System.out.println("newCodeTemplate" + newCodeTemplate);
 
         IntellijLiveTemplate template = new IntellijLiveTemplate(newCodeTemplate);

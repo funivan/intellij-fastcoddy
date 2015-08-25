@@ -67,7 +67,7 @@ public class CoddyProjectComponent implements ProjectComponent {
             // load global configuration
             CodeBuilder javascriptCodeBuilder = new CodeBuilder();
             javascriptCodeBuilder.loadConfigFromFile(PluginSettings.getSettings().configurationDirectory + "/javascript.json", "");
-            javascriptCodeBuilder.loadConfigFromFile(project.getWorkspaceFile().getParent().getPath() + "/fast-coddy/javasript.json", project.getBaseDir().getPath());
+            javascriptCodeBuilder.loadConfigFromFile(project.getWorkspaceFile().getParent().getPath() + "/fast-coddy/javascript.json", project.getBaseDir().getPath());
             codeExpands.put("JavaScript", new JavaScriptCodeExpandProcessor(javascriptCodeBuilder));
 
         } catch (JSONException e) {
