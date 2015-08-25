@@ -9,6 +9,7 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem;
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration;
 import org.funivan.intellij.FastCoddy.Helper.FileHelper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -108,6 +109,9 @@ public class CodeBuilder implements CodeBuilderInterface {
         String newCode = "";
         HashMap<String, VariableConfiguration> variablesConfiguration = new HashMap<String, VariableConfiguration>();
 
+
+        List<String> insertedTabs = new ArrayList<String>();
+        System.out.println("                       ==================                          ");
         for (int index = 0; index < localShortcutItemList.size(); index++) {
 
             LocalShortcutItem localShortcutItem = localShortcutItemList.get(index);
@@ -137,6 +141,8 @@ public class CodeBuilder implements CodeBuilderInterface {
                 System.out.println("insertPosition::" + insertPosition);
                 System.out.println("oldCode:" + newCode);
                 newCode = newCode.replace(insertPosition, shortcutTpl + insertPosition);
+                insertedTabs.add(insertPosition);
+
                 System.out.println("newCode:" + newCode);
                 System.out.println("...\n");
             }
@@ -151,6 +157,12 @@ public class CodeBuilder implements CodeBuilderInterface {
         newCode = newCode.replaceAll("\\$END\\$", "");
         newCode = newCode.replaceAll("(\\$TAB_[0-9]+_[0-9]+\\$)+", "$1");
 
+
+        // remove previous inserted positions
+        for (int insertedIndexTab = 0; insertedIndexTab < insertedTabs.size(); insertedIndexTab++) {
+            String tabId = insertedTabs.get(insertedIndexTab);
+            newCode = newCode.replace(tabId, "");
+        }
 
         return new CodeTemplate(newCode, variablesConfiguration);
 
