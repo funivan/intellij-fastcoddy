@@ -2,7 +2,7 @@ package org.funivan.intellij.FastCoddy.CodeBuilders;
 
 import com.intellij.psi.PsiFile;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * User: funivan
@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
  */
 public interface CodeBuilderInterface {
 
-    public CodeTemplate expandCodeFromShortcut(String shortcut, PsiFile psiFile);
+    CodeTemplate expandCodeFromShortcut(String shortcut, PsiFile psiFile);
 
-    public void loadConfigFromFile(String filePath, @Nullable String projectDirectory);
+    void loadConfigFromFile(String filePath, @Nullable String projectDirectory);
 
 }

@@ -1,6 +1,8 @@
 package org.funivan.intellij.FastCoddy.Helper;
 
-import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;

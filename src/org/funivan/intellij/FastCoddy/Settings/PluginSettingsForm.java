@@ -7,7 +7,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.funivan.intellij.FastCoddy.CoddyModuleComponent;
+import org.funivan.intellij.FastCoddy.CoddyAppComponent;
 import org.funivan.intellij.FastCoddy.Listeners.CustomMouseListener;
 import org.funivan.intellij.FastCoddy.Productivity.UsageStatistic;
 import org.jetbrains.annotations.Nls;
@@ -22,7 +22,6 @@ public class PluginSettingsForm implements Configurable {
     private JPanel panel1;
     private JButton resetPathButton;
     private TextFieldWithBrowseButton configurationDirectory;
-    private JButton resetConfigurationFilesButton;
     private JTextPane statPane;
 
     @Nls
@@ -36,7 +35,6 @@ public class PluginSettingsForm implements Configurable {
 
         configurationDirectory.getButton().addMouseListener(createPathButtonMouseListener(configurationDirectory.getTextField(), FileChooserDescriptorFactory.createSingleFolderDescriptor()));
         resetPathButton.addMouseListener(createResetPathButtonMouseListener(configurationDirectory.getTextField(), PluginSettings.DEFAULT_FULL_PATH));
-        resetConfigurationFilesButton.addMouseListener(createResetConfigurationButtonMouseListener());
 
         String statAsString = UsageStatistic.getStatAsString();
         statPane.setText("Stat:\n" + statAsString);
@@ -112,17 +110,6 @@ public class PluginSettingsForm implements Configurable {
         return new MouseListener();
     }
 
-    private MouseListener createResetConfigurationButtonMouseListener() {
-        class MouseListener extends CustomMouseListener {
-            @Override
-            public void mousePressed(MouseEvent mouseEvent) {
-                System.out.println(this + ":::createResetConfigurationButtonMouseListener");
-                CoddyModuleComponent.copyTemplateFiles(CoddyModuleComponent.FORCE_REWRITE_FILES);
-            }
-        }
-
-        return new MouseListener();
-    }
 
     private void createUIComponents() {
 

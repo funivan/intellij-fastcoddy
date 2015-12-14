@@ -85,7 +85,8 @@
     <depends>com.intellij.modules.platform</depends>
 
     <actions>
-        <action id="FastCoddy.Expand" class="org.funivan.intellij.FastCoddy.LanguageProcessor.ExpandAction" text="Expand code"
+        <action id="FastCoddy.Expand" class="org.funivan.intellij.FastCoddy.LanguageProcessor.ExpandAction"
+                text="Expand code"
                 description="Expand smart short code">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="control BACK_SLASH"/>
@@ -133,18 +134,10 @@
             <implementation-class>
                 org.funivan.intellij.FastCoddy.Productivity.TemplatesProductivityFeatureProvider
             </implementation-class>
+            <implementation-class>
+                org.funivan.intellij.FastCoddy.CoddyAppComponent
+            </implementation-class>
         </component>
     </application-components>
 
-    <project-components>
-        <component>
-            <implementation-class>org.funivan.intellij.FastCoddy.CoddyProjectComponent</implementation-class>
-        </component>
-    </project-components>
-
-    <module-components>
-        <component>
-            <implementation-class>org.funivan.intellij.FastCoddy.CoddyModuleComponent</implementation-class>
-        </component>
-    </module-components>
 </idea-plugin>
