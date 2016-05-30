@@ -1,6 +1,7 @@
 package org.funivan.intellij.FastCoddy;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.util.containers.HashMap;
 import org.codehaus.jettison.json.JSONException;
@@ -108,23 +109,25 @@ public class CoddyAppComponent implements ApplicationComponent {
 
             try {
 
+                String dir = PathManager.getConfigPath() + "/fast-coddy";
+
 
                 codeExpands = new HashMap<String, CodeExpandInterface>();
 
                 // load global configuration
                 CodeBuilder phpCodeBuilder = new CodeBuilder();
 
-                phpCodeBuilder.loadConfigFromFile(PluginSettings.getSettings().configurationDirectory + "/php.json", "");
+                phpCodeBuilder.loadConfigFromFile(dir + "/php.json", "");
                 codeExpands.put("PHP", new PhpCodeExpandProcessor(phpCodeBuilder));
 
 
                 CodeBuilder xpathCodeBuilder = new CodeBuilder();
-                xpathCodeBuilder.loadConfigFromFile(PluginSettings.getSettings().configurationDirectory + "/xpath.json", "");
+                xpathCodeBuilder.loadConfigFromFile(dir + "/xpath.json", "");
                 codeExpands.put("XPath", new XPathCodeExpandProcessor(xpathCodeBuilder));
 
                 // load global configuration
                 CodeBuilder javascriptCodeBuilder = new CodeBuilder();
-                javascriptCodeBuilder.loadConfigFromFile(PluginSettings.getSettings().configurationDirectory + "/javascript.json", "");
+                javascriptCodeBuilder.loadConfigFromFile(dir + "/javascript.json", "");
                 codeExpands.put("JavaScript", new JavaScriptCodeExpandProcessor(javascriptCodeBuilder));
 
             } catch (JSONException e) {

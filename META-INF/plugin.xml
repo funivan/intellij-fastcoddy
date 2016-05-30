@@ -12,6 +12,10 @@
 
     <change-notes><![CDATA[
 
+        <h2>0.4.6</h2>
+        <ul>
+            <li>Remove custom configuration directory. Remove disable plugin option</li>
+        </ul>
         <h2>0.4.5</h2>
         <ul>
             <li>fix: detect insert position</li>
@@ -110,11 +114,6 @@
 
         <tipAndTrick file="TemplateInvoke.html"/>
 
-        <projectConfigurable instance="org.funivan.intellij.FastCoddy.Settings.ProjectSettingsForm"
-                             id="FastCoddy.Project.SettingsForm"
-                             displayName="FastCoddy plugin"/>
-
-        <projectService serviceImplementation="org.funivan.intellij.FastCoddy.Settings.ProjectSettings"/>
 
 
         <!--- General plugin settings -->

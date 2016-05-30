@@ -16,7 +16,6 @@ import org.funivan.intellij.FastCoddy.CoddyAppComponent;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
 import org.funivan.intellij.FastCoddy.Productivity.UsageStatistic;
-import org.funivan.intellij.FastCoddy.Settings.ProjectSettings;
 
 import java.util.Map;
 
@@ -39,12 +38,6 @@ public class ExpandAction extends AnAction {
         Project project = editor.getProject();
 
         if (project == null) {
-            return;
-        }
-
-        ProjectSettings projectSettings = ProjectSettings.getInstance(project);
-
-        if (projectSettings == null || projectSettings.pluginEnabled == false) {
             return;
         }
 
