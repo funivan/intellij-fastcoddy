@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.funivan.intellij.FastCoddy.Actions.InsertLiveTemplateAction;
-import org.funivan.intellij.FastCoddy.CoddyAppComponent;
+import org.funivan.intellij.FastCoddy.FastCoddyAppComponent;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
 import org.funivan.intellij.FastCoddy.Productivity.UsageStatistic;
@@ -67,7 +67,7 @@ public class ExpandAction extends AnAction {
         }
 
 
-        Map<String, CodeExpandInterface> codeExpands = CoddyAppComponent.getInstance().getCodeExpand();
+        Map<String, CodeExpandInterface> codeExpands = FastCoddyAppComponent.getInstance().getCodeExpand();
 
         System.out.println("languageId::" + languageId);
         CodeExpandInterface codeExpandAction = codeExpands.get(languageId);

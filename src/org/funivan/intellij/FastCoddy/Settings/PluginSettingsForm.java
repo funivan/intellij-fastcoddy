@@ -1,6 +1,7 @@
 package org.funivan.intellij.FastCoddy.Settings;
 
 import com.intellij.openapi.options.Configurable;
+import org.funivan.intellij.FastCoddy.Helper.Str;
 import org.funivan.intellij.FastCoddy.Productivity.UsageStatistic;
 import org.jetbrains.annotations.Nls;
 
@@ -21,9 +22,27 @@ public class PluginSettingsForm implements Configurable {
     @Override
     public JComponent createComponent() {
 
-        String statAsString = UsageStatistic.getStatAsString();
-        statPane.setText("Stat:\n" + statAsString);
-        return (JComponent) panel1;
+        UsageStatistic statistic = UsageStatistic.getSettings();
+
+
+        String result = "You have used this action about " + Str.plural(statistic.used, "time", "times")
+
+                + " This plugin made about " +
+                (Float.toString((statistic.expandedChars * 100) / (statistic.typedChars + statistic.expandedChars)))
+                + "% of your work. "
+                + "\nYou typed " + Str.plural(statistic.typedChars, "symbol", "symbols")
+                + " and plugin expand this to " + statistic.expandedChars + " chars";
+
+        if (statistic.maximumShortCodes > 3) {
+            result = result + "\nYou are definitely cool coder. ";
+        }
+
+        result = result + "Max short codes inside you template is about " + statistic.maximumShortCodes;
+
+        result = result + "\n\nP.S. Number of templates you are using: " + statistic.usedShortCodes;
+
+        statPane.setText("Hello\n" + result);
+        return panel1;
     }
 
 

@@ -23,15 +23,15 @@ import java.util.Map;
 /**
  * Created by ivan on 14.12.15.
  */
-public class CoddyAppComponent implements ApplicationComponent {
+public class FastCoddyAppComponent implements ApplicationComponent {
 
     private static final String TEMPLATE_LOCATION = "/resources";
     public static Boolean FORCE_REWRITE_FILES = true;
     public static Boolean SKIP_REWRITE_FILES = false;
     private Map<String, CodeExpandInterface> codeExpands = null;
 
-    public static CoddyAppComponent getInstance() {
-        return ApplicationManager.getApplication().getComponent(CoddyAppComponent.class);
+    public static FastCoddyAppComponent getInstance() {
+        return ApplicationManager.getApplication().getComponent(FastCoddyAppComponent.class);
     }
 
     /**
@@ -60,7 +60,7 @@ public class CoddyAppComponent implements ApplicationComponent {
     private void copyTemplate(Boolean forceRewrite, String fileName) {
         String phpFileName = TEMPLATE_LOCATION + "/" + fileName;
 
-        InputStream is = CoddyAppComponent.class.getClassLoader().getResourceAsStream(phpFileName);
+        InputStream is = FastCoddyAppComponent.class.getClassLoader().getResourceAsStream(phpFileName);
 
 
         File destinationFile = new File(PluginSettings.DEFAULT_FULL_PATH + "/" + fileName);
@@ -91,7 +91,7 @@ public class CoddyAppComponent implements ApplicationComponent {
     @NotNull
     @Override
     public String getComponentName() {
-        return "CoddyAppComponent";
+        return "FastCoddyAppComponent";
     }
 
     public void flushConfiguration() {

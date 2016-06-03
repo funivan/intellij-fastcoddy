@@ -5,7 +5,7 @@
 
         Author: Ivan Shcherbak dev@funivan.com
     ]]></description>
-    <version>0.4.5</version>
+    <version>0.4.6</version>
     <vendor url="http://funivan.com/" email="dev@funivan.com">funivan.com</vendor>
     <idea-version since-build="138.184"/>
 
@@ -14,7 +14,9 @@
 
         <h2>0.4.6</h2>
         <ul>
-            <li>Remove custom configuration directory. Remove disable plugin option</li>
+            <li>Remove custom configuration directory</li>
+            <li>Remove option: disable plugin</li>
+            <li>Show nice statistics text</li>
         </ul>
         <h2>0.4.5</h2>
         <ul>
@@ -134,7 +136,7 @@
                 org.funivan.intellij.FastCoddy.Productivity.TemplatesProductivityFeatureProvider
             </implementation-class>
             <implementation-class>
-                org.funivan.intellij.FastCoddy.CoddyAppComponent
+                org.funivan.intellij.FastCoddy.FastCoddyAppComponent
             </implementation-class>
         </component>
     </application-components>
