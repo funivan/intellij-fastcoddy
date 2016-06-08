@@ -9,13 +9,13 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem;
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration;
 import org.funivan.intellij.FastCoddy.Helper.FileHelper;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * User: funivan
@@ -192,13 +192,13 @@ public class CodeBuilder implements CodeBuilderInterface {
                     Iterator keys = tabs.keySet().iterator();
 
                     Boolean detectPosition = false;
-                    
-                    
-                    if(insertPosition.equals("")==false){
+
+
+                    if (insertPosition.equals("") == false) {
                         detectPosition = true;
                         break;
                     }
-                    
+
                     while (keys.hasNext() && detectPosition == false) {
                         String tabIndex = (String) keys.next();
                         String[] currentTabGroups = tabs.get(tabIndex);
@@ -212,7 +212,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                             System.out.println("prevIndex:" + prevIndex);
                             Integer testIndex = leftPreviousIndexes + prevIndex - 1;
                             System.out.println("testIndex :" + testIndex);
-                            insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";                           
+                            insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
                         } else {
                             for (int i = 0; i < currentTabGroups.length; i++) {
                                 String placeToGroup = currentTabGroups[i];
@@ -287,8 +287,18 @@ public class CodeBuilder implements CodeBuilderInterface {
 
                     String regex = "^" + shortcut + "(.*)$";
                     System.out.println("regex:" + regex);
+                    Pattern pattern = null;
+                    try {
+                        pattern = Pattern.compile(regex);
+                    } catch (PatternSyntaxException ex) {
+                        System.out.println("Invalid pattern:" + shortcut);
+                        System.out.println("Error:" + ex.getMessage());
+                    }
 
-                    Pattern pattern = Pattern.compile(regex);
+                    if (pattern == null) {
+                        continue;
+                    }
+
                     Matcher matcher = pattern.matcher(typesString);
 
                     if (matcher.find()) {

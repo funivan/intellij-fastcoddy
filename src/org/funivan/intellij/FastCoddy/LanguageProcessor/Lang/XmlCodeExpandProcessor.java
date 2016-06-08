@@ -9,10 +9,10 @@ import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandProcessor;
  * Date: 12/25/13
  * Time: 10:24 AM
  */
-public class XPathCodeExpandProcessor extends CodeExpandProcessor {
+public class XmlCodeExpandProcessor extends CodeExpandProcessor {
 
 
-    public XPathCodeExpandProcessor(CodeBuilderInterface codeBuilder) {
+    public XmlCodeExpandProcessor(CodeBuilderInterface codeBuilder) {
         super(codeBuilder);
     }
 

@@ -9,7 +9,7 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilder;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandInterface;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.JavaScriptCodeExpandProcessor;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.PhpCodeExpandProcessor;
-import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.XPathCodeExpandProcessor;
+import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.XmlCodeExpandProcessor;
 import org.funivan.intellij.FastCoddy.Settings.PluginSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +53,7 @@ public class FastCoddyAppComponent implements ApplicationComponent {
 
         copyTemplate(forceRewrite, "php.json");
         copyTemplate(forceRewrite, "javascript.json");
-        copyTemplate(forceRewrite, "xpath.json");
+        copyTemplate(forceRewrite, "xml.json");
 
     }
 
@@ -121,9 +121,9 @@ public class FastCoddyAppComponent implements ApplicationComponent {
                 codeExpands.put("PHP", new PhpCodeExpandProcessor(phpCodeBuilder));
 
 
-                CodeBuilder xpathCodeBuilder = new CodeBuilder();
-                xpathCodeBuilder.loadConfigFromFile(dir + "/xpath.json", "");
-                codeExpands.put("XPath", new XPathCodeExpandProcessor(xpathCodeBuilder));
+                CodeBuilder xmlCodeBuilder = new CodeBuilder();
+                xmlCodeBuilder.loadConfigFromFile(dir + "/xml.json", "");
+                codeExpands.put("XML", new XmlCodeExpandProcessor(xmlCodeBuilder));
 
                 // load global configuration
                 CodeBuilder javascriptCodeBuilder = new CodeBuilder();

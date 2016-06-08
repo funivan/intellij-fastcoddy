@@ -32,7 +32,6 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
         return codeBuilder;
     }
 
-    @Override
     public CodeTemplate getCode(AnActionEvent anActionEvent) {
 
         String shortCode = detectShortCode(anActionEvent);

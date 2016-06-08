@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "group": "general",
+      "shortcut": "(\\?|=)",
+      "expand": "<?$1 $TAB1$ ?>",
+      "isRegex": true,
+      "regexpReplaces": {
+        "?": "",
+        "=": "="
+      }
+    }
+  ]
+}
