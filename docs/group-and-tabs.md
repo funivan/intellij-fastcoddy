@@ -1,7 +1,6 @@
 All variables MUST be in the format  `$VAR_<your_variable_name>$`  for example `$VAR_METHOD_NAME$` or `$VAR_USER$`
 
 ## 1.1 Simple Variables example
-            0
 Configuration:
 ```js
   {
