@@ -12,9 +12,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.funivan.intellij.FastCoddy.Actions.InsertLiveTemplateAction;
-import org.funivan.intellij.FastCoddy.FastCoddyAppComponent;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
+import org.funivan.intellij.FastCoddy.FastCoddyAppComponent;
 import org.funivan.intellij.FastCoddy.Productivity.UsageStatistic;
 
 import java.util.Map;
@@ -49,6 +49,11 @@ public class ExpandAction extends AnAction {
         }
 
         PsiFile psiFile = PsiManager.getInstance(editor.getProject()).findFile(virtualFile);
+
+        if (psiFile == null) {
+            return;
+        }
+
         int offset = editor.getCaretModel().getOffset() - 1;
 
         PsiElement el = psiFile.findElementAt(offset);
@@ -62,30 +67,28 @@ public class ExpandAction extends AnAction {
 
         // check if we have injected part of string
         PsiElement injectedElementAt = InjectedLanguageManager.getInstance(psiFile.getProject()).findInjectedElementAt(psiFile, offset);
-        if (injectedElementAt != null && injectedElementAt.getLanguage() != null) {
+        if (injectedElementAt != null) {
             languageId = injectedElementAt.getLanguage().getID();
         }
 
 
         Map<String, CodeExpandInterface> codeExpands = FastCoddyAppComponent.getInstance().getCodeExpand();
 
-        System.out.println("languageId::" + languageId);
+
         CodeExpandInterface codeExpandAction = codeExpands.get(languageId);
         if (codeExpandAction == null) {
-            System.out.println("empty codeExpandActions for language:" + languageId);
             return;
         }
 
         // remember current state
         String initialSelectedText = editor.getSelectionModel().getSelectedText();
         int initialOffset = offset + 1;
-        System.out.println("save:" + initialOffset);
+
         CodeTemplate newCodeTemplate = codeExpandAction.getCode(anActionEvent);
         if (newCodeTemplate == null || newCodeTemplate.isEmpty()) {
 
             // restore cursor configuration
             if (initialSelectedText == null) {
-                System.out.println("restore:" + initialOffset);
                 editor.getSelectionModel().removeSelection();
                 editor.getCaretModel().moveToOffset(initialOffset);
             }
@@ -94,24 +97,21 @@ public class ExpandAction extends AnAction {
         }
 
 
-        System.out.println("newCodeTemplate" + newCodeTemplate);
+
 
         IntellijLiveTemplate template = new IntellijLiveTemplate(newCodeTemplate);
         InsertLiveTemplateAction insertAction = new InsertLiveTemplateAction(template, el, editor);
 
-        System.out.println("stage 0");
+
         insertAction.run();
-        System.out.println("stage 1 ");
 
-
-        System.out.println("change data:" + initialOffset);
 
         UsageStatistic.used();
         UsageStatistic.usedShortCodes(newCodeTemplate.getUsedShortCodesNum());
         UsageStatistic.expandedChars(newCodeTemplate.getCode().length());
         UsageStatistic.typedChars(newCodeTemplate.getInitialString().length());
 
-        UsageStatistic.show();
+
     }
 
 

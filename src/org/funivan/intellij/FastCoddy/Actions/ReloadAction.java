@@ -12,6 +12,7 @@ public class ReloadAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         FastCoddyAppComponent.getInstance().flushConfiguration();
+
     }
 
 

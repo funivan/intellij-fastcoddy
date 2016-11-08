@@ -7,14 +7,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 
+/**
+ * Template item defined in the configuration file
+ */
 public class TemplateItem {
     /**
      * Group used for check insertion position
      * If you do not provide group name shortcut value will be used
      */
-    protected String group;
+    private String group;
 
     /**
      * Can be empty
@@ -24,30 +28,31 @@ public class TemplateItem {
      * example: ucs
      */
 
-    protected String shortcut;
+    private String shortcut;
 
     /**
      * Replace shortcut to this string
      */
-    protected String expand;
+    private String expand;
 
     /**
      * Used for better template support
      */
-    protected String fileRegexp;
+    private String fileRegexp;
 
     /**
      * Check if shortcut is regex
      * Default value is false
      */
-    protected Boolean isRegex = false;
-
-    protected HashMap<String, String> regexpReplaces = new HashMap<String, String>();
+    private Boolean isRegex = false;
 
 
-    protected HashMap<String, String[]> tabs = new HashMap<String, String[]>();
+    private HashMap<String, String> regexpReplaces = new HashMap<>();
 
-    protected HashMap<String, VariableConfiguration> vars;
+
+    private HashMap<String, String[]> tabs = new HashMap<>();
+
+    private LinkedHashMap<String, VariableConfiguration> vars;
 
 
     @Nullable
@@ -56,23 +61,18 @@ public class TemplateItem {
 
 
         if (!configuration.has("shortcut")) {
-            System.out.println("does not have shortcut");
             return null;
         }
 
         String shortcut = configuration.getString("shortcut");
 
         if (shortcut.length() == 0) {
-            System.out.println("shortcut has 0 length");
             return null;
         }
-        System.out.println("load::");
-        System.out.println(shortcut);
-        System.out.println("///");
+
         templateItem.setShortcut(shortcut);
 
         if (!configuration.has("expand")) {
-            System.out.println("does not vae expand");
             return null;
         }
 
@@ -127,7 +127,7 @@ public class TemplateItem {
         }
 
 
-        HashMap<String, VariableConfiguration> vars = new HashMap<String, VariableConfiguration>();
+        LinkedHashMap<String, VariableConfiguration> vars = new LinkedHashMap<>();
 
         if (configuration.has("vars")) {
             JSONObject variablesConfig = configuration.getJSONObject("vars");
@@ -161,7 +161,7 @@ public class TemplateItem {
         return group;
     }
 
-    public void setGroup(String group) {
+    private void setGroup(String group) {
         this.group = group;
     }
 
@@ -169,7 +169,7 @@ public class TemplateItem {
         return expand;
     }
 
-    public void setExpand(String expand) {
+    private void setExpand(String expand) {
         this.expand = expand;
     }
 
@@ -212,20 +212,13 @@ public class TemplateItem {
     }
 
 
-    public HashMap<String, VariableConfiguration> getVars() {
+    public LinkedHashMap<String, VariableConfiguration> getVars() {
         return vars;
     }
 
-    public void setVars(HashMap<String, VariableConfiguration> vars) {
+    public void setVars(LinkedHashMap<String, VariableConfiguration> vars) {
         this.vars = vars;
     }
 
-
-    public Boolean validForFile(String filePath) {
-        if (this.fileRegexp.isEmpty()) {
-            return true;
-        }
-        return (filePath.matches(this.fileRegexp) == true);
-    }
 
 }

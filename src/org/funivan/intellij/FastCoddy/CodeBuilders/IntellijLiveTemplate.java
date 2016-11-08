@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,41 +52,38 @@ public class IntellijLiveTemplate implements CustomLiveTemplate {
     @Override
     public void expand(String code, @NotNull CustomTemplateCallback customTemplateCallback) {
 
-        HashMap<String, VariableConfiguration> variables = codeTemplateConfigurationTemplate.getVariablesConfiguration();
+        LinkedHashMap<String, VariableConfiguration> variables = codeTemplateConfigurationTemplate.getVariablesConfiguration();
         code = code.replaceAll("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$", "__$1__");
         code = code.replace("$", "$$");
         code = code.replaceAll("__(TAB[0-9_]+|VAR_[0-9_A-Z]+)__", "\\$$1\\$");
 
+        System.out.println("code:");
+        System.out.println(code);
 
         TemplateImpl template = new TemplateImpl("", code, "");
         template.setToReformat(true);
         template.setToIndent(true);
 
-        Matcher matcher = Pattern.compile("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$").matcher(code);
-
+        Matcher variableTabMatch = Pattern.compile("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$").matcher(code);
         List<String> variableNamesList = new ArrayList<String>();
-        while (matcher.find()) {
-            String variableName = matcher.group(1);
+
+
+        // Add variable names to the template in the order defined inside our configuration
+        for (String variableName : variables.keySet()) {
+            VariableConfiguration variableConfiguration = variables.get(variableName);
+            template.addVariable(variableName, variableConfiguration.getExpression(), variableConfiguration.getDefaultValue(), variableConfiguration.getAlwaysStopAt());
+            variableNamesList.add(variableName);
+        }
+
+
+        while (variableTabMatch.find()) {
+            String variableName = variableTabMatch.group(1);
 
             if (variableNamesList.contains(variableName)) {
-                System.out.println("skip. variable exist :" + variableName);
                 continue;
             }
 
-//            System.out.println("add variable:" + variableName);
-
-            VariableConfiguration variableConfiguration = variables.get(variableName);
-            if (variableConfiguration != null) {
-//                System.out.println("getExpression:" + variableConfiguration.getExpression());
-//                System.out.println("getDefaultValue:" + variableConfiguration.getDefaultValue());
-//                System.out.println("getAlwaysStopAt:" + variableConfiguration.getAlwaysStopAt());
-//                System.out.println("");
-                template.addVariable(variableName, variableConfiguration.getExpression(), variableConfiguration.getDefaultValue(), variableConfiguration.getAlwaysStopAt());
-            } else {
-                template.addVariable(variableName, "", "", true);
-            }
-
-
+            template.addVariable(variableName, "", "", true);
             variableNamesList.add(variableName);
         }
 
@@ -96,13 +93,11 @@ public class IntellijLiveTemplate implements CustomLiveTemplate {
 
         builder.insertTemplate(0, template, null);
         TemplateImpl templateComplete = builder.buildTemplate();
-        System.out.println("--");
-        System.out.println(templateComplete);
-        System.out.println("--");
+
         if (templateComplete == null) {
-            System.out.println("templateComplete == null");
             return;
         }
+
         customTemplateCallback.startTemplate(templateComplete, null, null);
     }
 

@@ -3,6 +3,7 @@ package org.funivan.intellij.FastCoddy.CodeBuilders;
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Final configuration of template
@@ -21,9 +22,9 @@ public class CodeTemplate {
 
     protected String code;
 
-    protected HashMap<String, VariableConfiguration> variablesConfiguration;
+    protected LinkedHashMap<String, VariableConfiguration> variablesConfiguration;
 
-    public CodeTemplate(String code, HashMap<String, VariableConfiguration> variablesConfiguration) {
+    public CodeTemplate(String code, LinkedHashMap<String, VariableConfiguration> variablesConfiguration) {
         this.code = code;
         this.variablesConfiguration = variablesConfiguration;
     }
@@ -37,7 +38,7 @@ public class CodeTemplate {
     }
 
 
-    public HashMap<String, VariableConfiguration> getVariablesConfiguration() {
+    public LinkedHashMap<String, VariableConfiguration> getVariablesConfiguration() {
         return variablesConfiguration;
     }
 

@@ -7,28 +7,24 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem;
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration;
+import org.funivan.intellij.FastCoddy.FastCoddyAppComponent;
 import org.funivan.intellij.FastCoddy.Helper.FileHelper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * User: funivan
- * Date: 12/23/13
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class CodeBuilder implements CodeBuilderInterface {
 
-    private JSONObject options;
+
     private ArrayList<TemplateItem> templateItems;
 
     public CodeBuilder() throws JSONException {
-        this.options = new JSONObject();
-        this.templateItems = new ArrayList<TemplateItem>();
+        this.templateItems = new ArrayList<>();
     }
 
 
@@ -38,14 +34,13 @@ public class CodeBuilder implements CodeBuilderInterface {
     public CodeTemplate expandCodeFromShortcut(String shortcut, PsiFile psiFile) {
 
 
-        List<LocalShortcutItem> list = null;
         CodeTemplate newCodeTemplate = null;
 
         try {
 
             String filePath = psiFile.getVirtualFile().getPath();
+            List<LocalShortcutItem> list = this.getShortcutItems(shortcut, filePath);
 
-            list = this.getShortcutItems(shortcut, filePath);
             newCodeTemplate = this.getNewCode(list);
             newCodeTemplate.setInitialString(shortcut);
             newCodeTemplate.setUsedShortCodesNum(list.size());
@@ -72,7 +67,7 @@ public class CodeBuilder implements CodeBuilderInterface {
             JSONArray itemTemplates = obj.getJSONArray("items");
 
             Integer maxIndex = this.templateItems.size();
-            System.out.println("maxIndex:" + maxIndex);
+//            System.out.println("maxIndex:" + maxIndex);
             // prepare config
             // load configuration from end to start
             Integer index = 0;
@@ -107,11 +102,10 @@ public class CodeBuilder implements CodeBuilderInterface {
     protected CodeTemplate getNewCode(List<LocalShortcutItem> localShortcutItemList) throws JSONException {
 
         String newCode = "";
-        HashMap<String, VariableConfiguration> variablesConfiguration = new HashMap<String, VariableConfiguration>();
+        LinkedHashMap<String, VariableConfiguration> variablesConfiguration = new LinkedHashMap<>();
 
 
         List<String> insertedTabs = new ArrayList<String>();
-        System.out.println("                       ==================                          ");
         for (int index = 0; index < localShortcutItemList.size(); index++) {
 
             LocalShortcutItem localShortcutItem = localShortcutItemList.get(index);
@@ -121,7 +115,7 @@ public class CodeBuilder implements CodeBuilderInterface {
             TemplateItem item = this.templateItems.get(shortcutKey);
 
             // merge variables
-            HashMap<String, VariableConfiguration> variables = localShortcutItem.getTemplateItem().getVars();
+            LinkedHashMap<String, VariableConfiguration> variables = localShortcutItem.getTemplateItem().getVars();
             for (String key : variables.keySet()) {
                 variablesConfiguration.put(key, variables.get(key));
             }
@@ -130,21 +124,13 @@ public class CodeBuilder implements CodeBuilderInterface {
             // prepare new template
             shortcutTpl = shortcutTpl.replaceAll("\\$TAB([0-9]+)\\$", "\\$TAB_" + index + "_$1\\$");
 
-            System.out.println("shortcutTpl::" + shortcutTpl);
             if (newCode.isEmpty() || index == 0) {
                 newCode = shortcutTpl;
             } else {
-                // detect where we need to add this item
                 Integer prevIndex = index;
-                System.out.println("prevIndex:" + prevIndex);
                 String insertPosition = getInsertPosition(localShortcutItemList, item, prevIndex);
-                System.out.println("insertPosition::" + insertPosition);
-                System.out.println("oldCode:" + newCode);
                 newCode = newCode.replace(insertPosition, shortcutTpl + insertPosition);
                 insertedTabs.add(insertPosition);
-
-                System.out.println("newCode:" + newCode);
-                System.out.println("...\n");
             }
 
 
@@ -183,7 +169,7 @@ public class CodeBuilder implements CodeBuilderInterface {
 
             TemplateItem prevItem = this.templateItems.get(previousLocalShortcutItem.getKey());
             if (prevItem != null) {
-                System.out.println("Prev item:" + prevItem.getShortcut());
+//                System.out.println("Prev item:" + prevItem.getShortcut());
 
                 if (prevItem.hasTabs()) {
                     // detect in what place we need to insert our code
@@ -203,27 +189,27 @@ public class CodeBuilder implements CodeBuilderInterface {
                         String tabIndex = (String) keys.next();
                         String[] currentTabGroups = tabs.get(tabIndex);
                         String itemGroup = item.getGroup();
-                        System.out.println("itemGroup::" + itemGroup);
+//                        System.out.println("itemGroup::" + itemGroup);
 
                         Integer tabGroupsLen = currentTabGroups.length;
                         if (tabGroupsLen == 0) {
                             // use tabs: { TAB2: []} ] to place all items to tab2
-                            System.out.println("leftPreviousIndexes:" + leftPreviousIndexes);
-                            System.out.println("prevIndex:" + prevIndex);
+//                            System.out.println("leftPreviousIndexes:" + leftPreviousIndexes);
+//                            System.out.println("prevIndex:" + prevIndex);
                             Integer testIndex = leftPreviousIndexes + prevIndex - 1;
-                            System.out.println("testIndex :" + testIndex);
+//                            System.out.println("testIndex :" + testIndex);
                             insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
                         } else {
                             for (int i = 0; i < currentTabGroups.length; i++) {
                                 String placeToGroup = currentTabGroups[i];
-                                System.out.println("placeToGroup::" + placeToGroup);
+//                                System.out.println("placeToGroup::" + placeToGroup);
                                 if (placeToGroup.equals(itemGroup)) {
-                                    System.out.println("Group are equal");
+//                                    System.out.println("Group are equal");
 
-                                    System.out.println("leftPreviousIndexes:" + leftPreviousIndexes);
-                                    System.out.println("prevIndex:" + prevIndex);
+//                                    System.out.println("leftPreviousIndexes:" + leftPreviousIndexes);
+//                                    System.out.println("prevIndex:" + prevIndex);
                                     Integer testIndex = leftPreviousIndexes + prevIndex - 1;
-                                    System.out.println("testIndex :" + testIndex);
+//                                    System.out.println("testIndex :" + testIndex);
                                     insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
                                     detectPosition = true;
                                     break;
@@ -274,7 +260,8 @@ public class CodeBuilder implements CodeBuilderInterface {
             for (int index = this.templateItems.size() - 1; index >= 0; index--) {
                 TemplateItem templateItem = this.templateItems.get(index);
 
-                if (!templateItem.validForFile(filePath)) {
+
+                if (!filePath.matches(templateItem.getFileRegexp())) {
                     continue;
                 }
 
@@ -286,13 +273,11 @@ public class CodeBuilder implements CodeBuilderInterface {
                 if (templateItem.isRegexp()) {
 
                     String regex = "^" + shortcut + "(.*)$";
-                    System.out.println("regex:" + regex);
                     Pattern pattern = null;
                     try {
                         pattern = Pattern.compile(regex);
                     } catch (PatternSyntaxException ex) {
-                        System.out.println("Invalid pattern:" + shortcut);
-                        System.out.println("Error:" + ex.getMessage());
+                        FastCoddyAppComponent.LOG.error("Invalid pattern:" + shortcut, "Error:" + ex.getMessage());
                     }
 
                     if (pattern == null) {
@@ -330,8 +315,6 @@ public class CodeBuilder implements CodeBuilderInterface {
 
                         LocalShortcutItem localShortcutItem = new LocalShortcutItem(index, expandToString, templateItem);
                         shortcutsExpand.add(localShortcutItem);
-                        System.out.println("new string:" + expandToString);
-
                         added = true;
                         break;
                     }

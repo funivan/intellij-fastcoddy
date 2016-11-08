@@ -31,7 +31,7 @@ public class InsertLiveTemplateAction {
                 CommandProcessor.getInstance().executeCommand(el.getProject(), new Runnable() {
                     public void run() {
 
-                        System.out.println("deletion start");
+//                        System.out.println("deletion start");
 
                         int selectionStart = editor.getSelectionModel().getSelectionStart();
                         int selectionEnd = editor.getSelectionModel().getSelectionEnd();

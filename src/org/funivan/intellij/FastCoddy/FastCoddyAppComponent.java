@@ -3,6 +3,7 @@ package org.funivan.intellij.FastCoddy;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.containers.HashMap;
 import org.codehaus.jettison.json.JSONException;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilder;
@@ -21,13 +22,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 /**
- * Created by ivan on 14.12.15.
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class FastCoddyAppComponent implements ApplicationComponent {
 
+    final public static Logger LOG = Logger.getInstance("Symfony-Plugin");
+
     private static final String TEMPLATE_LOCATION = "/resources";
-    public static Boolean FORCE_REWRITE_FILES = true;
-    public static Boolean SKIP_REWRITE_FILES = false;
     private Map<String, CodeExpandInterface> codeExpands = null;
 
     public static FastCoddyAppComponent getInstance() {
@@ -39,15 +40,16 @@ public class FastCoddyAppComponent implements ApplicationComponent {
      *
      * @param forceRewrite
      */
-    public void copyTemplateFiles(Boolean forceRewrite) {
+    public void copyTemplateFiles(Boolean forceRewrite) throws IOException {
         String defaultPath = PluginSettings.DEFAULT_FULL_PATH;
         File defaultDir = new File(defaultPath);
         if (!defaultDir.exists()) {
-            defaultDir.mkdir();
+            if (!defaultDir.mkdir()) {
+                throw new IOException("Can not create configuration directory");
+            }
         }
 
         if (!defaultDir.exists()) {
-            System.out.println("Can not create directory");
             return;
         }
 
@@ -78,9 +80,11 @@ public class FastCoddyAppComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        copyTemplateFiles(SKIP_REWRITE_FILES); // in production mode
-//        copyTemplateFiles(FORCE_REWRITE_FILES); // in debug mode
-
+        try {
+            copyTemplateFiles(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -112,7 +116,7 @@ public class FastCoddyAppComponent implements ApplicationComponent {
                 String dir = PathManager.getConfigPath() + "/fast-coddy";
 
 
-                codeExpands = new HashMap<String, CodeExpandInterface>();
+                codeExpands = new HashMap<>();
 
                 // load global configuration
                 CodeBuilder phpCodeBuilder = new CodeBuilder();

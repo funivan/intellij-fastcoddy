@@ -6,8 +6,8 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ivan
+ *
+ * @author
  */
 @State(
         name = "CoddyUsageStatistic",
@@ -26,6 +26,8 @@ public class UsageStatistic implements PersistentStateComponent<UsageStatistic> 
 
     public Integer typedChars = 0;
 
+    public Integer hotKeysEconomy = 0;
+
     public Integer expandedChars = 0;
 
     public long firstStart = 0;
@@ -43,6 +45,7 @@ public class UsageStatistic implements PersistentStateComponent<UsageStatistic> 
             statistic.maximumShortCodes = shortCodesNum;
         }
 
+        statistic.hotKeysEconomy = statistic.hotKeysEconomy + shortCodesNum - 1;
         statistic.usedShortCodes += shortCodesNum;
     }
 
@@ -56,27 +59,9 @@ public class UsageStatistic implements PersistentStateComponent<UsageStatistic> 
     }
 
 
-    public static String getStatAsString() {
-        UsageStatistic service = UsageStatistic.getSettings();
-
-        String result = "";
-        result += "Used                : " + service.used + "\n";
-        result += "UsedShortCodes      : " + service.usedShortCodes + "\n";
-        result += "TypedChars          : " + service.typedChars + "\n";
-        result += "ExpandedChars       : " + service.expandedChars + "\n";
-        result += "maximumShortCodes   : " + service.maximumShortCodes + "\n";
-
-        return result;
-    }
-
-    public static void show() {
-        System.out.println(getStatAsString());
-    }
-
     @Nullable
     @Override
     public UsageStatistic getState() {
-        System.out.println("UsageStatistic");
 
         if (firstStart == 0) {
             firstStart = System.currentTimeMillis();
