@@ -139,10 +139,6 @@
                 org.funivan.intellij.FastCoddy.FastCoddyAppComponent
             </implementation-class>
         </component>
-        <component>
-            <implementation-class>org.funivan.intellij.FastCoddy.FastCoddyAppComponent</implementation-class>
-            <interface-class>org.funivan.intellij.FastCoddy.FastCoddyAppComponent</interface-class>
-        </component>
     </application-components>
 
 </idea-plugin>
