@@ -1,13 +1,12 @@
 {
-  items : [
+  "items": [
     {
       /**
        * Group used to check insertion position
        * If you do not provide group name shortcut value will be used
        *
        */
-      group: '',
-
+      "group": "",
       /**
        * Can`t be empty
        * MUST be simple and intuitive
@@ -15,358 +14,372 @@
        * example: &
        * example: thr
        */
-      shortcut: '',
-
+      "shortcut": "",
       /**
        * Replace shortcut to this string
        */
-      expand: 'throw new \Exception()',
-
+      "expand": "throw new \\Exception()",
       /**
        * Replace before paste
        *
        */
-      replaceRegex: {},
-
+      "replaceRegex": {},
       /**
        * Check if shortcut is regex
        * Default value is false
        */
-      isRegex: false,
+      "isRegex": false,
       /**
        * Tabs configuration
        * Detect in what tab you need to insert other part of code
        *
        */
-      tabs: {
-
+      "tabs": {
       },
       /**
        * Variables definition
        * You can set default value, expression
        */
-      vars : {
-
+      "vars": {
       },
       /**
        * According to this regexp you can use different shortcuts in different files
        *
        */
-      fileRegexp : ''
+      "fileRegexp": ""
+    },
+
+    {
+      "group": "variable_handling",
+      "shortcut": "(\!?isn|\!?io)",
+      "expand": "$1",
+      "isRegex": true,
+      "regexpReplaces": {
+        "io": "\\$\\$VAR_VARIABLE_NAME\\$ instanceof \\$VAR_CLASS_NAME\\$",
+        "!io": "\\!(\\$\\$VAR_VARIABLE_NAME\\$ instanceof \\$VAR_CLASS_NAME\\$)",
+        "isn": "\\$\\$VAR_VARIABLE_NAME\\$ === null",
+        "!isn": "\\$\\$VAR_VARIABLE_NAME\\$ \\!= null"
+      },
+      "vars": {
+        "VAR_VARIABLE_NAME": {
+          "expression": "completeSmart()",
+          "alwaysStopAt": true
+        },
+        "VAR_CLASS_NAME": {
+          "expression": "completeSmart()",
+          "alwaysStopAt": true
+        }
+      }
     },
     {
       /**
-       * Type cast.
+       * Type cast
        */
-      group: 'cast',
-      shortcut: ':(s|a|i|o)',
-      expand: '($1) ',
-      isRegex: true,
-      regexpReplaces: {
-        's': 'string',
-        'a': 'array',
-        'i': 'int',
-        'o': 'object'
+      "group": "cast",
+      "shortcut": ":(s|a|i|b|f)",
+      "expand": "($1) ",
+      "isRegex": true,
+      "regexpReplaces": {
+        "s": "string",
+        "a": "array",
+        "i": "int",
+        "b": "boolean",
+        "f": "float"
       }
     },
     {
-      group: 'class_fields',
-      shortcut: '(pub|pro|pri)(s)?(\\$n|\\$s|\\$a|\\$f|\\$t)',
-      expand: '$1 $2 $$TAB1$ = $3;\n',
-      isRegex: true,
-      regexpReplaces: {
-        'pub': 'public',
-        'pro': 'protected',
-        'pri': 'private',
-        's': 'static',
-        '$a': '[]',
-        '$n': 'null',
-        '$s': '\'\'',
-        '$f': 'false',
-        '$t': 'true'
+      "group": "class_fields",
+      "shortcut": "(pub|pro|pri)(s)?(\\$n|\\$s|\\$a|\\$f|\\$t)",
+      "expand": "$1 $2 $$TAB1$ $3;\n",
+      "isRegex": true,
+      "regexpReplaces": {
+        "pub": "public",
+        "pro": "protected",
+        "pri": "private",
+        "s": "static",
+        "$a": "= []",
+        "$n": "",
+        "$s": "= \"\"",
+        "$f": "= false",
+        "$t": "= true"
       }
     },
-
+    {
+      /**
+       * new line
+       */
+      "shortcut": "\\n",
+      "expand": "echo $TAB1$\"\\n\";"
+    },
     {
       /**
        * Variable
        */
-      shortcut: '$',
-      expand: '$'
+      "shortcut": "$",
+      "expand": "$"
     },
     {
-      group: 'logical_operators',
-      shortcut: '(\\||\&)',
-      isRegex: true,
-      expand: ' $1 $TAB1$',
-      regexpReplaces: {
-        '&': 'and',
-        '|': 'or'
+      "group": "logical_operators",
+      "shortcut": "(\\||\&)",
+      "isRegex": true,
+      "expand": " $1 $TAB1$",
+      "regexpReplaces": {
+        "&": "and",
+        "|": "or"
       },
-      tabs: {
-        TAB1: [ 'variable_handling', 'preg_match_fn' ]
+      "tabs": {
+        "TAB1": [
+          "variable_handling",
+          "preg_match_fn"
+        ]
       }
     },
     {
-      group: 'control_structure',
-      shortcut: '(co|br|rf|ra|rt|rn|rs|r\\$|r)',
-      expand: '$1;',
-      isRegex: true,
-      regexpReplaces: {
-        'co': 'continue',
-        'br': 'break',
-        'r$': 'return \\$this',
-        'ra': 'return array()',
-        'rs': 'return ""',
-        'rf': 'return false',
-        'rt': 'return true',
-        'rn': 'return null',
-        'r': 'return '
-      }
-    },
-
-    {
-      group: 'if',
-      shortcut: '(eli|if)',
-      expand: ' $1($TAB1$){$TAB2$}',
-      isRegex: true,
-      regexpReplaces: {
-        'eli': 'elseif'
+      "group": "control_structure",
+      "shortcut": "(co|br|rf|ra|rt|rn|rs|r\\$|r;|r)",
+      "expand": "$1",
+      "isRegex": true,
+      "regexpReplaces": {
+        "co": "continue;",
+        "br": "break;",
+        "r$": "return \\$this;",
+        "ra": "return array();",
+        "rs": "return '';",
+        "rf": "return false;",
+        "rt": "return true;",
+        "rn": "return null;",
+        "r": "return \\$TAB1\\$;"
       },
-      tabs: {
-        END: [ 'class_method', 'if' ],
-        TAB1: [  'variable_handling', 'preg_match_fn', 'logical_operators' ],
-        TAB2: []
+      "tabs": {
+        "TAB1": []
       }
     },
     {
-      group: 'variable_handling',
-      shortcut: '(\!)?(iso|isf|isd|isa|isi|isn|isc|iss|in|i|e)',
-      expand: ' $1$2($TAB1$) $TAB2$',
-      isRegex: true,
-      tabs: {
-        TAB2: [ 'variable_handling', 'logical_operators' ]
-      },
-      regexpReplaces: {
-        'iso': 'is_object',
-        'isf': 'is_file',
-        'isd': 'is_dir',
-        'isa': 'is_array',
-        'isc': 'is_callable',
-        'isi': 'is_integer',
-        'isn': 'is_null',
-        'iss': 'is_string',
-        'in' : 'in_array',
-        'i': 'isset',
-        'e': 'empty'
+      "group": "variable_handling",
+      "shortcut": "c([!=><0-9]*)",
+      "expand": " count($VAR_COUNT_VARIABLE$)$1",
+      "isRegex": true,
+      "regexpReplaces": {
       }
     },
     {
-      group: 'preg_match_fn',
-      shortcut: '(prma|prm)',
-      expand: '$1(\'!$VAR_REGEXP$!\', $VAR_SUBJECT$, $VAR_MATCHED$)',
-      isRegex: true,
-      regexpReplaces: {
-        'prma':'preg_match_all',
-        'prm':'preg_match'
+      "group": "if",
+      "shortcut": "(eli|if)",
+      "expand": " $1($TAB1$){$TAB2$}",
+      "isRegex": true,
+      "regexpReplaces": {
+        "eli": "elseif"
       },
-      vars : {
-          VAR_SUBJECT: {
-            expression : "complete()",
-            alwaysStopAt : true
-          },
-          VAR_MATCHED: {
-            defaultValue : '"$matchedData"',
-            alwaysStopAt : true
-          }
+      "tabs": {
+        "END": [
+          "class_method",
+          "if"
+        ],
+        "TAB1": [
+          "variable_handling",
+          "preg_match_fn",
+          "logical_operators",
+          "operand"
+        ],
+        "TAB2": []
+      }
+    },
+    {
+      "group": "if",
+      "shortcut": "el",
+      "expand": " else{$TAB1$}",
+      "tabs": {
+        "END": [
+          "class_method"
+        ],
+        "TAB1": []
+      }
+    },
+    {
+      "group": "variable_handling",
+      "shortcut": "(\!)?(iso|isf|isd|isa|isi|isc|iss|in|i|e)",
+      "expand": " $1$2($VAR_ITEM$) $TAB2$",
+      "isRegex": true,
+      "tabs": {
+        "TAB2": [
+          "variable_handling",
+          "logical_operators"
+        ]
+      },
+      "regexpReplaces": {
+        "iso": "is_object",
+        "isf": "is_file",
+        "isd": "is_dir",
+        "isa": "is_array",
+        "isc": "is_callable",
+        "isi": "is_int",
+        "iss": "is_string",
+        "in": "in_array",
+        "i": "isset",
+        "e": "empty"
+      },
+      "vars": {
+        "VAR_ITEM": {
+          "expression": "complete()",
+          "alwaysStopAt": true
         }
-    },
-    {
-      group: 'preg_replace_callback_fn',
-      shortcut: 'prrc',
-      expand: '$VAR_SUBJECT$ = preg_replace_callback(\'!$VAR_REGEXP$!\', function($matches){\n$VAR_TO$\n} ,$VAR_SUBJECT$)',
-      vars : {
-          VAR_REGEXP :{
-            alwaysStopAt : true
-          },
-          VAR_SUBJECT: {
-            expression : "complete()",
-            alwaysStopAt : true
-          },
-          VAR_TO: {
-            defaultValue: '"return $matches[0];"',
-            alwaysStopAt : true
-          }
-        }
-    },
-
-    {
-      group: 'preg_replace_fn',
-      shortcut: 'prr',
-      expand: '$VAR_SUBJECT$ = preg_replace(\'!$VAR_REGEXP$!\', $VAR_TO$ ,$VAR_SUBJECT$)',
-      vars : {
-          VAR_REGEXP :{
-            alwaysStopAt : true
-          },
-          VAR_SUBJECT: {
-            expression : "complete()",
-            alwaysStopAt : true
-          },
-          VAR_TO: {
-            defaultValue : '"\'\'"',
-            alwaysStopAt : true
-          }
-        }
-    },
-    
-    {
-      group: 'variable_handling',
-      shortcut: 'c([!=<>0-9]*)',
-      expand: ' count($TAB1$)$1',
-      tabs: {
-        TAB2: [ 'variable_handling' ]
-      },
-      isRegex: true,
-      regexpReplaces: {
-        'e': '=',
-        'n': '!='
       }
     },
     {
-      shortcut: 'fork',
-      expand: 'foreach($$VAR_ARRAY$ as $VAR_KEY$=>$VAR_VALUE$){\n$TAB4$\n}',
-      tabs: {
-        TAB4: []
+      /**
+       * Not Operand
+       */
+      "group": "operand",
+      "shortcut": "!",
+      "expand": "!"
+    },
+    {
+      "group": "preg_match_fn",
+      "shortcut": "(prma|prm)",
+      "expand": "$1(\"!$VAR_REGEXP$!\", $VAR_SUBJECT$, $VAR_MATCHED$)",
+      "isRegex": true,
+      "regexpReplaces": {
+        "prma": "preg_match_all",
+        "prm": "preg_match"
       },
-      vars : {
-        VAR_ARRAY: {
-          expression : "complete()",
-          alwaysStopAt : true
+      "vars": {
+        "VAR_SUBJECT": {
+          "expression": "completeSmart()",
+          "alwaysStopAt": true
         },
-        VAR_KEY: {
-          defaultValue : '"$key"',
-          alwaysStopAt : true
-        },
-        VAR_VALUE: {
-          defaultValue : '"$value"',
-          alwaysStopAt : true
+        "VAR_MATCHED": {
+          "defaultValue": "\"$matchedData\"",
+          "alwaysStopAt": true
         }
       }
     },
     {
-      shortcut: 'for',
-      expand: 'foreach ($VAR_ARRAY$ as $VAR_VARIABLE$){\n$TAB1$\n}\n',
-      vars : {
-          VAR_ARRAY : {
-            expression : "complete()",
-            alwaysStopAt : true
-          },
-          VAR_VARIABLE: {
-            defaultValue : '"$value"',
-            alwaysStopAt : true
-          }
+      "group": "preg_replace_fn",
+      "shortcut": "prr",
+      "expand": "$VAR_SUBJECT_TARGET$ = preg_replace(\"!$VAR_REGEXP$!\", '$VAR_TO$', $VAR_SUBJECT$);;",
+      "vars": {
+        "VAR_REGEXP": {
+          "alwaysStopAt": true
+        },
+        "VAR_SUBJECT": {
+          "expression": "completeSmart()",
+          "alwaysStopAt": true
+        },
+        "VAR_SUBJECT_TARGET": {
+          "defaultValue": "VAR_SUBJECT",
+          "alwaysStopAt": false
+        },
+        "VAR_TO": {
+          "alwaysStopAt": false
+        }
+      }
+    },
+    {
+      "shortcut": "for(k|e)",
+      "expand": "foreach($VAR_ARRAY$ as $1$$VAR_VALUE$){\n$TAB1$\n}",
+      "isRegex": true,
+      "regexpReplaces": {
+        "e": "",
+        "k": "\\$VAR_KEY\\$ => "
       },
-      tabs: {
-        TAB1: []
+      "vars": {
+        "VAR_ARRAY": {
+          "expression": "complete()",
+          "alwaysStopAt": true
+        },
+        "VAR_KEY": {
+          "defaultValue": "\"$key\"",
+          "alwaysStopAt": true
+        },
+        "VAR_VALUE": {
+          "expression": "complete()",
+          "alwaysStopAt": true
+        }
       }
     },
     {
-      shortcut: 'thr(i|)',
-      expand: ' throw new \\$1Exception("$TAB1$");\n',
-      isRegex: true,
-      regexpReplaces: {
-        'i': 'InvalidArgument'
+      "shortcut": "thr(i|r|)",
+      "expand": " throw new \\$1Exception('$TAB1$');\n",
+      "isRegex": true,
+      "regexpReplaces": {
+        "i": "InvalidArgument",
+        "r": "Runtime"
       }
     },
     {
-      group: 'class_method',
-      shortcut: '(pub|pro|pri)a',
-      expand: '$1 abstract function $TAB1$($TAB2$);',
-      isRegex: true,
-      regexpReplaces: {
-        'pub': 'public',
-        'pro': 'protected',
-        'pri': 'private',
-        'f': 'final'
+      "shortcut": "try",
+      "expand": "try { $TAB1$ } catch($VAR_CLASS_NAME$ $e){ $TAB2$ }",
+      "vars": {
+        "VAR_CLASS_NAME": {
+          "expression": "completeSmart()",
+          "defaultValue": "\"\\Exception\"",
+          "alwaysStopAt": true
+        }
       }
     },
     {
       /**
        * Merge several shortcuts combinations
        */
-      group: 'class_method',
-      shortcut: '(pub|pro|pri)(s|f|sf)?',
-      expand: '$1 $2 function $TAB1$($TAB2$){\n$TAB3$\n}',
-      isRegex: true,
-      regexpReplaces: {
-        'pub': 'public',
-        'pro': 'protected',
-        'pri': 'private',
-        's': 'static',
-        'f': 'final'
-      },
-      tabs: {
-        END: [ 'class_method' ],
-        TAB3: []
+      "group": "class_method",
+      "shortcut": "(pub|pro|pri)(s|f|a|sf)?(:s|:i|:b|:a|:\\$|:)?",
+      "expand": "$1 $2 function $TAB1$($TAB2$)$3{\n$TAB4$\n}",
+      "isRegex": true,
+      "regexpReplaces": {
+        "pub": "public",
+        "pro": "protected",
+        "pri": "private",
+        "s": "static",
+        "f": "final",
+        "a": "abstract",
+        ":s": " : string ",
+        ":i": " : int ",
+        ":a": " : array ",
+        ":b": " : bool ",
+        ":$": " : self ",
+        ":": " : \\$TAB3\\$ "
+      }
+    },
+    {
+      "group": ":iterator",
+      "shortcut": "do",
+      "expand": "do{\n$TAB1$\n}while($TAB2$);\n",
+      "tabs": {
+        "END": [
+          "class_method"
+        ],
+        "TAB2": [
+          "variable_handling",
+          "logical_operators"
+        ],
+        "TAB1": []
+      }
+    },
+    {
+      "group": ":function",
+      "shortcut": "fn",
+      "expand": "function($TAB1$){\n$TAB2$\n}",
+      "tabs": {
+        "END": [
+          "class_method"
+        ],
+        "TAB2": []
+      }
+    },
+    {
+      "group": ":iterator",
+      "shortcut": "while",
+      "expand": "while($TAB1$){$TAB2$};\n",
+      "tabs": {
+        "END": [
+          "class_method"
+        ],
+        "TAB1": [
+          "variable_handling",
+          "logical_operators"
+        ],
+        "TAB2": []
       }
     }
-    ,
-    {
-      group: ':iterator',
-      shortcut: 'do',
-      expand: 'do{\n$TAB1$\n}while($TAB2$);\n',
-      tabs: {
-        END: [ 'class_method' ],
-        TAB2: [  'variable_handling', 'logical_operators' ],
-        TAB1: [ ]
-      }
-    }
-    ,
-    {
-      group: ':function',
-      shortcut: 'fn',
-      expand: 'function($TAB1$){\n$TAB2$\n}',
-      tabs: {
-        END: [ 'class_method' ],
-        TAB2: [ ]
-      }
-    }
-    ,
-    {
-      group: ':iterator',
-      shortcut: 'while',
-      expand: 'while($TAB1$){$TAB2$};\n',
-      tabs: {
-        END: [ 'class_method' ],
-        TAB1: [  'variable_handling', 'logical_operators' ],
-        TAB2: [ ]
-      }
-    }
-    ,
-    {
-      group: ':debug_print',
-      shortcut: '=(s|a)(d|)',
-      isRegex: true,
-      expand: 'echo "\\n***".__LINE__."***\\n<pre>".print_r($1$TAB1$, true)."</pre>\\n";$2',
-      tabs: {
-        TAB1: [ ]
-      },
-      regexpReplaces: {
-        'd': 'die();',
-        's': '(string)',
-        'a': ' '
-      }
-    }
-    ,
-    {
-      group: ':class_method',
-      shortcut: '__a',
-      expand: 'public function append$VAR_METHOD$($$VAR_FIELD$){\n $this->$VAR_FIELD$[] = $$VAR_FIELD$; }\n',
-      vars : {
-        VAR_FIELD : {
-          expression : "decapitalize(VAR_METHOD)"
-        }
-      }
-     }
   ]
 }
