@@ -1,29 +1,24 @@
 package org.funivan.intellij.FastCoddy.CodeBuilders;
 
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem;
-import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration;
-
-import java.util.HashMap;
 
 /**
  * Represent one item from typed string
  *
- * User: funivan
- * Date: 12/23/13
+ * @author Ivan Scherbak <dev@funivan>
  */
-public class LocalShortcutItem {
-    protected TemplateItem templateItem;
-    protected Integer key;
+class LocalShortcutItem {
+    private TemplateItem templateItem;
+    private Integer key;
     protected String code;
-    protected HashMap<String, VariableConfiguration> variablesConfiguration;
 
-    public LocalShortcutItem(Integer key, String code, TemplateItem templateItem) {
+    LocalShortcutItem(Integer key, String code, TemplateItem templateItem) {
         this.key = key;
         this.code = code;
         this.templateItem = templateItem;
     }
 
-    public Integer getKey() {
+    Integer getKey() {
         return key;
     }
 
@@ -31,7 +26,7 @@ public class LocalShortcutItem {
         return code;
     }
 
-    public TemplateItem getTemplateItem() {
+    TemplateItem getTemplateItem() {
         return templateItem;
     }
 }

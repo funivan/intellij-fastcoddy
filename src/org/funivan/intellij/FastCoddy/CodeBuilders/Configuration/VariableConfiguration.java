@@ -1,21 +1,17 @@
 package org.funivan.intellij.FastCoddy.CodeBuilders.Configuration;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ivan
- * Date: 6/23/14
- * Time: 3:38 PM
- * To change this template use File | Settings | File Templates.
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class VariableConfiguration {
 
-    protected String expression;
+    private String expression;
 
-    protected String defaultValue;
+    private String defaultValue;
 
-    protected Boolean alwaysStopAt;
+    private Boolean alwaysStopAt;
 
-    public VariableConfiguration(String expression, String defaultValue, Boolean alwaysStopAt) {
+    VariableConfiguration(String expression, String defaultValue, Boolean alwaysStopAt) {
         this.expression = expression;
         this.defaultValue = defaultValue;
         this.alwaysStopAt = alwaysStopAt;

@@ -16,12 +16,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * User: ivan
- * Date: 12/23/13
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class IntellijLiveTemplate implements CustomLiveTemplate {
 
-    protected CodeTemplate codeTemplateConfigurationTemplate;
+    private CodeTemplate codeTemplateConfigurationTemplate;
 
     public IntellijLiveTemplate(CodeTemplate codeTemplateConfigurationTemplate) {
         this.codeTemplateConfigurationTemplate = codeTemplateConfigurationTemplate;
@@ -50,32 +49,22 @@ public class IntellijLiveTemplate implements CustomLiveTemplate {
     }
 
     @Override
-    public void expand(String code, @NotNull CustomTemplateCallback customTemplateCallback) {
+    public void expand(@NotNull String code, @NotNull CustomTemplateCallback customTemplateCallback) {
 
         LinkedHashMap<String, VariableConfiguration> variables = codeTemplateConfigurationTemplate.getVariablesConfiguration();
         code = code.replaceAll("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$", "__$1__");
         code = code.replace("$", "$$");
         code = code.replaceAll("__(TAB[0-9_]+|VAR_[0-9_A-Z]+)__", "\\$$1\\$");
 
-        System.out.println("code:");
-        System.out.println(code);
 
         TemplateImpl template = new TemplateImpl("", code, "");
         template.setToReformat(true);
         template.setToIndent(true);
 
         Matcher variableTabMatch = Pattern.compile("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$").matcher(code);
-        List<String> variableNamesList = new ArrayList<String>();
+        List<String> variableNamesList = new ArrayList<>();
 
-
-        // Add variable names to the template in the order defined inside our configuration
-        for (String variableName : variables.keySet()) {
-            VariableConfiguration variableConfiguration = variables.get(variableName);
-            template.addVariable(variableName, variableConfiguration.getExpression(), variableConfiguration.getDefaultValue(), variableConfiguration.getAlwaysStopAt());
-            variableNamesList.add(variableName);
-        }
-
-
+        // Find all variables to the
         while (variableTabMatch.find()) {
             String variableName = variableTabMatch.group(1);
 
@@ -83,8 +72,30 @@ public class IntellijLiveTemplate implements CustomLiveTemplate {
                 continue;
             }
 
-            template.addVariable(variableName, "", "", true);
             variableNamesList.add(variableName);
+        }
+
+        List<String> addedVariableNames = new ArrayList<>();
+
+        // Add variables to the template in the order defined inside our configuration
+        for (String variableName : variables.keySet()) {
+            if (addedVariableNames.contains(variableName)) {
+                continue;
+            }
+            if (variableNamesList.contains(variableName)) {
+                VariableConfiguration variableConfiguration = variables.get(variableName);
+                template.addVariable(variableName, variableConfiguration.getExpression(), variableConfiguration.getDefaultValue(), variableConfiguration.getAlwaysStopAt());
+                addedVariableNames.add(variableName);
+            }
+        }
+
+        // Add other not defined variables according to the position inside the template
+        for (String variableName : variableNamesList) {
+            if (addedVariableNames.contains(variableName)) {
+                continue;
+            }
+            template.addVariable(variableName, "", "", true);
+            addedVariableNames.add(variableName);
         }
 
 
@@ -94,15 +105,11 @@ public class IntellijLiveTemplate implements CustomLiveTemplate {
         builder.insertTemplate(0, template, null);
         TemplateImpl templateComplete = builder.buildTemplate();
 
-        if (templateComplete == null) {
-            return;
-        }
-
         customTemplateCallback.startTemplate(templateComplete, null, null);
     }
 
     @Override
-    public void wrap(String s, @NotNull CustomTemplateCallback customTemplateCallback) {
+    public void wrap(@NotNull String s, @NotNull CustomTemplateCallback customTemplateCallback) {
 
     }
 
