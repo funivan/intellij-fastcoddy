@@ -14,6 +14,8 @@
         <h2>0.4.7</h2>
         <b>Configuration changed!</b>
         <ul>
+            <li>Delimiters are stored inside configuration file</li>
+            <li>Show nice errors if our config files are invalid</li>
             <li>fileRegexp changed to fileRegex (Without <i> p</i> at the end)</li>
             <li>regexpReplaces changed to regexReplaces (Without <i>p</i> inside)</li>
             <li>You can configure Cursor position manipulating variables priority</li>

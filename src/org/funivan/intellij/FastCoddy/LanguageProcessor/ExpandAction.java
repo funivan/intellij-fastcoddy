@@ -1,6 +1,9 @@
 package org.funivan.intellij.FastCoddy.LanguageProcessor;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -11,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.codehaus.jettison.json.JSONException;
 import org.funivan.intellij.FastCoddy.Actions.InsertLiveTemplateAction;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
@@ -72,8 +76,17 @@ public class ExpandAction extends AnAction {
         }
 
 
-        Map<String, CodeExpandInterface> codeExpands = FastCoddyAppComponent.getInstance().getCodeExpand();
+        Map<String, CodeExpandInterface> codeExpands = null;
+        try {
+            codeExpands = FastCoddyAppComponent.getInstance().getCodeExpand();
+        } catch (JSONException e) {
+            Notification notification = new Notification("FastCoddy Plugin", "Load configuration error", e.getMessage(), NotificationType.ERROR);
+            Notifications.Bus.notify(notification, project);
+        }
 
+        if (codeExpands == null) {
+            return;
+        }
 
         CodeExpandInterface codeExpandAction = codeExpands.get(languageId);
         if (codeExpandAction == null) {
@@ -95,8 +108,6 @@ public class ExpandAction extends AnAction {
 
             return;
         }
-
-
 
 
         IntellijLiveTemplate template = new IntellijLiveTemplate(newCodeTemplate);

@@ -7,26 +7,22 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.PsiFile;
-import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilderInterface;
+import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilder;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
 
 /**
  * @author Ivan Scherbak <dev@funivan>
  */
-public abstract class CodeExpandProcessor implements CodeExpandInterface {
+public class CodeExpandProcessor implements CodeExpandInterface {
 
-    private CodeBuilderInterface codeBuilder;
-    private String[] delimiterSymbols;
+    private CodeBuilder codeBuilder;
 
-    public CodeExpandProcessor(CodeBuilderInterface codeBuilder) {
+    public CodeExpandProcessor(CodeBuilder codeBuilder) {
         this.codeBuilder = codeBuilder;
-        this.delimiterSymbols = getDelimiterSymbols();
     }
 
-    private CodeBuilderInterface getCodeBuilder() {
+    private CodeBuilder getCodeBuilder() {
         return codeBuilder;
     }
 
@@ -112,7 +108,8 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
 
 
     private Boolean validSymbolForCapture(String symbol) {
-        return !Arrays.asList(this.delimiterSymbols).contains(symbol);
+        return !symbol.equals(" ") && !codeBuilder.getDelimiters().contains(symbol);
+
     }
 
 }

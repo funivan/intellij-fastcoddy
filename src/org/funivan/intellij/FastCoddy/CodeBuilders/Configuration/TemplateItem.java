@@ -58,7 +58,7 @@ public class TemplateItem {
 
 
     @Nullable
-    public static TemplateItem initFromJson(JSONObject configuration, String filePathPrefix) throws JSONException {
+    public static TemplateItem initFromJson(JSONObject configuration) throws JSONException {
         TemplateItem templateItem = new TemplateItem();
 
 
@@ -88,9 +88,9 @@ public class TemplateItem {
         }
         templateItem.setGroup(group);
 
-        String fileRegex = filePathPrefix + "/.*";
+        String fileRegex = ".*";
         if (configuration.has("fileRegex")) {
-            fileRegex = filePathPrefix + configuration.getString("fileRegex");
+            fileRegex = configuration.getString("fileRegex");
         }
 
         templateItem.setFileRegex(fileRegex);

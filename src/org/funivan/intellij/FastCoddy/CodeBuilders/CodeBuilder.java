@@ -22,9 +22,13 @@ public class CodeBuilder implements CodeBuilderInterface {
 
 
     private ArrayList<TemplateItem> templateItems;
+    private ArrayList<String> delimiters;
 
-    public CodeBuilder() throws JSONException {
+    public CodeBuilder(String filePath) throws JSONException {
         this.templateItems = new ArrayList<>();
+        this.delimiters = new ArrayList<>();
+        this.loadConfigFromFile(filePath);
+
     }
 
 
@@ -51,39 +55,43 @@ public class CodeBuilder implements CodeBuilderInterface {
         return newCodeTemplate;
     }
 
-    public void loadConfigFromFile(String filePath, String filePathPrefix) {
+    private void loadConfigFromFile(String filePath) throws JSONException {
         String jsonString = FileHelper.getFileContent(filePath);
 
         if (jsonString == null || jsonString.isEmpty()) {
             return;
         }
-        try {
-            JSONObject obj = new JSONObject(jsonString);
 
-            if (!obj.has("items")) {
-                return;
-            }
+        JSONObject obj = new JSONObject(jsonString);
 
-            JSONArray itemTemplates = obj.getJSONArray("items");
-
-            Integer maxIndex = this.templateItems.size();
-//            System.out.println("maxIndex:" + maxIndex);
-            // prepare config
-            // load configuration from end to start
-            Integer index = 0;
-            for (int i = itemTemplates.length() - 1; i >= 0; i--) {
-                JSONObject itemConfiguration = itemTemplates.getJSONObject(i);
-                TemplateItem templateItem = TemplateItem.initFromJson(itemConfiguration, filePathPrefix);
-
-                if (templateItem != null) {
-                    this.templateItems.add(templateItem);
-                    index++;
-                }
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (!obj.has("items")) {
+            throw new JSONException("Empty items section inside the file: " + filePath);
         }
+
+        if (!obj.has("delimiters")) {
+            throw new JSONException("Empty delimiters section inside the file: " + filePath);
+        }
+
+        JSONArray delimiters = obj.getJSONArray("delimiters");
+
+        for (int delimiterIndex = delimiters.length() - 1; delimiterIndex >= 0; delimiterIndex--) {
+            String itemDelimiter = delimiters.getString(delimiterIndex);
+            this.delimiters.add(itemDelimiter);
+        }
+
+
+        JSONArray itemTemplates = obj.getJSONArray("items");
+
+
+        for (int i = itemTemplates.length() - 1; i >= 0; i--) {
+            JSONObject itemConfiguration = itemTemplates.getJSONObject(i);
+            TemplateItem templateItem = TemplateItem.initFromJson(itemConfiguration);
+
+            if (templateItem != null) {
+                this.templateItems.add(templateItem);
+            }
+        }
+
 
     }
 
@@ -320,5 +328,7 @@ public class CodeBuilder implements CodeBuilderInterface {
         return shortcutsExpand;
     }
 
-
+    public ArrayList<String> getDelimiters() {
+        return delimiters;
+    }
 }

@@ -1,4 +1,10 @@
 {
+  "delimiters": [
+    "[",
+    "]",
+    "/",
+    "*"
+  ],
   "items": [
     {
       "group": "general",

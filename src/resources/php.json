@@ -1,4 +1,7 @@
 {
+  "delimiters": [
+    "("
+  ],
   "items": [
     {
       /**
@@ -48,7 +51,6 @@
        */
       "fileRegex": ""
     },
-
     {
       "group": "variable_handling",
       "shortcut": "(\!?isn|\!?io)",
@@ -243,7 +245,7 @@
         "prm": "preg_match"
       },
       "vars": {
-        "VAR_REGEX" : {
+        "VAR_REGEX": {
           "alwaysStopAt": true
         },
         "VAR_SUBJECT": {

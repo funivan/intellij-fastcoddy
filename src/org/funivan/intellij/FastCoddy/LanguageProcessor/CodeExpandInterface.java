@@ -10,6 +10,5 @@ public interface CodeExpandInterface {
     
     CodeTemplate getCode(AnActionEvent anActionEvent);
 
-    String[] getDelimiterSymbols();
     
 }

@@ -8,9 +8,7 @@ import com.intellij.util.containers.HashMap;
 import org.codehaus.jettison.json.JSONException;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilder;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandInterface;
-import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.JavaScriptCodeExpandProcessor;
-import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.PhpCodeExpandProcessor;
-import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.XmlCodeExpandProcessor;
+import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandProcessor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -103,36 +101,29 @@ public class FastCoddyAppComponent implements ApplicationComponent {
     /**
      * Load code expands
      */
-    public Map<String, CodeExpandInterface> getCodeExpand() {
+    public Map<String, CodeExpandInterface> getCodeExpand() throws JSONException {
 
         if (this.codeExpands == null) {
 
-            try {
 
-                String dir = PathManager.getConfigPath() + "/fast-coddy";
-
-
-                codeExpands = new HashMap<>();
-
-                // load global configuration
-                CodeBuilder phpCodeBuilder = new CodeBuilder();
-
-                phpCodeBuilder.loadConfigFromFile(dir + "/php.json", "");
-                codeExpands.put("PHP", new PhpCodeExpandProcessor(phpCodeBuilder));
+            String dir = PathManager.getConfigPath() + "/fast-coddy";
 
 
-                CodeBuilder xmlCodeBuilder = new CodeBuilder();
-                xmlCodeBuilder.loadConfigFromFile(dir + "/xml.json", "");
-                codeExpands.put("XML", new XmlCodeExpandProcessor(xmlCodeBuilder));
+            codeExpands = new HashMap<>();
 
-                // load global configuration
-                CodeBuilder javascriptCodeBuilder = new CodeBuilder();
-                javascriptCodeBuilder.loadConfigFromFile(dir + "/javascript.json", "");
-                codeExpands.put("JavaScript", new JavaScriptCodeExpandProcessor(javascriptCodeBuilder));
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            CodeBuilder phpCodeBuilder = new CodeBuilder(dir + "/php.json");
+            codeExpands.put("PHP", new CodeExpandProcessor(phpCodeBuilder));
+
+
+            CodeBuilder xmlCodeBuilder = new CodeBuilder(dir + "/xml.json");
+            codeExpands.put("XML", new CodeExpandProcessor(xmlCodeBuilder));
+
+
+            CodeBuilder javascriptCodeBuilder = new CodeBuilder(dir + "/javascript.json");
+            codeExpands.put("JavaScript", new CodeExpandProcessor(javascriptCodeBuilder));
+
+
         }
 
         return this.codeExpands;
