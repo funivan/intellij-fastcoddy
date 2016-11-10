@@ -5,7 +5,7 @@
       shortcut: '(eli|if)',
       expand: ' $1($TAB1$){$TAB2$}',
       isRegex: true,
-      regexpReplaces: {
+      regexReplaces: {
         'eli': 'else if'
       },
       tabs: {

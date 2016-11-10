@@ -43,10 +43,10 @@
       "vars": {
       },
       /**
-       * According to this regexp you can use different shortcuts in different files
+       * According to this regex you can use different shortcuts in different files
        *
        */
-      "fileRegexp": ""
+      "fileRegex": ""
     },
 
     {
@@ -54,7 +54,7 @@
       "shortcut": "(\!?isn|\!?io)",
       "expand": "$1",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "io": "\\$\\$VAR_VARIABLE_NAME\\$ instanceof \\$VAR_CLASS_NAME\\$",
         "!io": "\\!(\\$\\$VAR_VARIABLE_NAME\\$ instanceof \\$VAR_CLASS_NAME\\$)",
         "isn": "\\$\\$VAR_VARIABLE_NAME\\$ === null",
@@ -79,7 +79,7 @@
       "shortcut": ":(s|a|i|b|f)",
       "expand": "($1) ",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "s": "string",
         "a": "array",
         "i": "int",
@@ -92,7 +92,7 @@
       "shortcut": "(pub|pro|pri)(s)?(\\$n|\\$s|\\$a|\\$f|\\$t)",
       "expand": "$1 $2 $$TAB1$ $3;\n",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "pub": "public",
         "pro": "protected",
         "pri": "private",
@@ -123,7 +123,7 @@
       "shortcut": "(\\||\&)",
       "isRegex": true,
       "expand": " $1 $TAB1$",
-      "regexpReplaces": {
+      "regexReplaces": {
         "&": "and",
         "|": "or"
       },
@@ -139,7 +139,7 @@
       "shortcut": "(co|br|rf|ra|rt|rn|rs|r\\$|r;|r)",
       "expand": "$1",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "co": "continue;",
         "br": "break;",
         "r$": "return \\$this;",
@@ -159,7 +159,7 @@
       "shortcut": "c([!=><0-9]*)",
       "expand": " count($VAR_COUNT_VARIABLE$)$1",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
       }
     },
     {
@@ -167,7 +167,7 @@
       "shortcut": "(eli|if)",
       "expand": " $1($TAB1$){$TAB2$}",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "eli": "elseif"
       },
       "tabs": {
@@ -206,7 +206,7 @@
           "logical_operators"
         ]
       },
-      "regexpReplaces": {
+      "regexReplaces": {
         "iso": "is_object",
         "isf": "is_file",
         "isd": "is_dir",
@@ -236,13 +236,16 @@
     {
       "group": "preg_match_fn",
       "shortcut": "(prma|prm)",
-      "expand": "$1(\"!$VAR_REGEXP$!\", $VAR_SUBJECT$, $VAR_MATCHED$)",
+      "expand": "$1(\"!$VAR_REGEX$!\", $VAR_SUBJECT$, $VAR_MATCHED$)",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "prma": "preg_match_all",
         "prm": "preg_match"
       },
       "vars": {
+        "VAR_REGEX" : {
+          "alwaysStopAt": true
+        },
         "VAR_SUBJECT": {
           "expression": "completeSmart()",
           "alwaysStopAt": true
@@ -256,9 +259,9 @@
     {
       "group": "preg_replace_fn",
       "shortcut": "prr",
-      "expand": "$VAR_SUBJECT_TARGET$ = preg_replace(\"!$VAR_REGEXP$!\", '$VAR_TO$', $VAR_SUBJECT$);;",
+      "expand": "$VAR_SUBJECT_TARGET$ = preg_replace(\"!$VAR_REGEX$!\", '$VAR_TO$', $VAR_SUBJECT$);;",
       "vars": {
-        "VAR_REGEXP": {
+        "VAR_REGEX": {
           "alwaysStopAt": true
         },
         "VAR_SUBJECT": {
@@ -278,7 +281,7 @@
       "shortcut": "for(k|e)",
       "expand": "foreach($VAR_ARRAY$ as $1$$VAR_VALUE$){\n$TAB1$\n}",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "e": "",
         "k": "\\$VAR_KEY\\$ => "
       },
@@ -301,7 +304,7 @@
       "shortcut": "thr(i|r|)",
       "expand": " throw new \\$1Exception('$TAB1$');\n",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "i": "InvalidArgument",
         "r": "Runtime"
       }
@@ -325,7 +328,7 @@
       "shortcut": "(pub|pro|pri)(s|f|a|sf)?(:s|:i|:b|:a|:\\$|:)?",
       "expand": "$1 $2 function $TAB1$($TAB2$)$3{\n$TAB4$\n}",
       "isRegex": true,
-      "regexpReplaces": {
+      "regexReplaces": {
         "pub": "public",
         "pro": "protected",
         "pri": "private",

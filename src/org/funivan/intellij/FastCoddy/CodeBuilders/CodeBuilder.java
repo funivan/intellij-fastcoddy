@@ -99,13 +99,13 @@ public class CodeBuilder implements CodeBuilderInterface {
      * we have string e
      * <p/>
      */
-    protected CodeTemplate getNewCode(List<LocalShortcutItem> localShortcutItemList) throws JSONException {
+    private CodeTemplate getNewCode(List<LocalShortcutItem> localShortcutItemList) throws JSONException {
 
         String newCode = "";
         LinkedHashMap<String, VariableConfiguration> variablesConfiguration = new LinkedHashMap<>();
 
 
-        List<String> insertedTabs = new ArrayList<String>();
+        List<String> insertedTabs = new ArrayList<>();
         for (int index = 0; index < localShortcutItemList.size(); index++) {
 
             LocalShortcutItem localShortcutItem = localShortcutItemList.get(index);
@@ -145,8 +145,7 @@ public class CodeBuilder implements CodeBuilderInterface {
 
 
         // remove previous inserted positions
-        for (int insertedIndexTab = 0; insertedIndexTab < insertedTabs.size(); insertedIndexTab++) {
-            String tabId = insertedTabs.get(insertedIndexTab);
+        for (String tabId : insertedTabs) {
             newCode = newCode.replace(tabId, "");
         }
 
@@ -180,12 +179,11 @@ public class CodeBuilder implements CodeBuilderInterface {
                     Boolean detectPosition = false;
 
 
-                    if (insertPosition.equals("") == false) {
-                        detectPosition = true;
+                    if (!insertPosition.equals("")) {
                         break;
                     }
 
-                    while (keys.hasNext() && detectPosition == false) {
+                    while (keys.hasNext() && !detectPosition) {
                         String tabIndex = (String) keys.next();
                         String[] currentTabGroups = tabs.get(tabIndex);
                         String itemGroup = item.getGroup();
@@ -194,22 +192,11 @@ public class CodeBuilder implements CodeBuilderInterface {
                         Integer tabGroupsLen = currentTabGroups.length;
                         if (tabGroupsLen == 0) {
                             // use tabs: { TAB2: []} ] to place all items to tab2
-//                            System.out.println("leftPreviousIndexes:" + leftPreviousIndexes);
-//                            System.out.println("prevIndex:" + prevIndex);
                             Integer testIndex = leftPreviousIndexes + prevIndex - 1;
-//                            System.out.println("testIndex :" + testIndex);
                             insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
                         } else {
-                            for (int i = 0; i < currentTabGroups.length; i++) {
-                                String placeToGroup = currentTabGroups[i];
-//                                System.out.println("placeToGroup::" + placeToGroup);
+                            for (String placeToGroup : currentTabGroups) {
                                 if (placeToGroup.equals(itemGroup)) {
-//                                    System.out.println("Group are equal");
-
-//                                    System.out.println("leftPreviousIndexes:" + leftPreviousIndexes);
-//                                    System.out.println("prevIndex:" + prevIndex);
-                                    Integer testIndex = leftPreviousIndexes + prevIndex - 1;
-//                                    System.out.println("testIndex :" + testIndex);
                                     insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
                                     detectPosition = true;
                                     break;
@@ -240,13 +227,10 @@ public class CodeBuilder implements CodeBuilderInterface {
      * <p/>
      * In this method we detect pars from string according to our configuration
      *
-     * @param typesString
-     * @param filePath
-     * @return
      * @throws JSONException
      */
-    protected List<LocalShortcutItem> getShortcutItems(String typesString, String filePath) throws JSONException {
-        List<LocalShortcutItem> shortcutsExpand = new ArrayList<LocalShortcutItem>();
+    private List<LocalShortcutItem> getShortcutItems(String typesString, String filePath) throws JSONException {
+        List<LocalShortcutItem> shortcutsExpand = new ArrayList<>();
 
         typesString = typesString.trim();
 
@@ -261,7 +245,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                 TemplateItem templateItem = this.templateItems.get(index);
 
 
-                if (!filePath.matches(templateItem.getFileRegexp())) {
+                if (!filePath.matches(templateItem.getFileRegex())) {
                     continue;
                 }
 
@@ -270,7 +254,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                 String shortcut = templateItem.getShortcut();
 
 
-                if (templateItem.isRegexp()) {
+                if (templateItem.isRegex()) {
 
                     String regex = "^" + shortcut + "(.*)$";
                     Pattern pattern = null;
@@ -290,7 +274,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                         String expandToString = templateItem.getExpand();
 
 
-                        HashMap<String, String> regexReplace = templateItem.getRegexpReplaces();
+                        HashMap<String, String> regexReplace = templateItem.getRegexReplaces();
 
                         int groupsNum = matcher.groupCount();
 
@@ -330,7 +314,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                 }
             }
 
-            if (added == false) {
+            if (!added) {
                 shortcutsExpand.clear();
                 return shortcutsExpand;
             }

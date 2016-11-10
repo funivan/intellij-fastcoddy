@@ -38,7 +38,7 @@ public class TemplateItem {
     /**
      * Used for better template support
      */
-    private String fileRegexp;
+    private String fileRegex;
 
     /**
      * Check if shortcut is regex
@@ -47,7 +47,7 @@ public class TemplateItem {
     private Boolean isRegex = false;
 
 
-    private HashMap<String, String> regexpReplaces = new HashMap<>();
+    private HashMap<String, String> regexReplaces = new HashMap<>();
 
 
     private HashMap<String, String[]> tabs = new HashMap<>();
@@ -86,27 +86,27 @@ public class TemplateItem {
         }
         templateItem.setGroup(group);
 
-        String fileRegexp = filePathPrefix + "/.*";
-        if (configuration.has("fileRegexp")) {
-            fileRegexp = filePathPrefix + configuration.getString("fileRegexp");
+        String fileRegex = filePathPrefix + "/.*";
+        if (configuration.has("fileRegex")) {
+            fileRegex = filePathPrefix + configuration.getString("fileRegex");
         }
 
-        templateItem.setFileRegexp(fileRegexp);
+        templateItem.setFileRegex(fileRegex);
 
 
-        if (configuration.has("isRegexp")) {
-            templateItem.setIsRegex(configuration.getBoolean("isRegexp"));
+        if (configuration.has("isRegex")) {
+            templateItem.setIsRegex(configuration.getBoolean("isRegex"));
         }
 
-        if (configuration.has("regexpReplaces")) {
+        if (configuration.has("regexReplaces")) {
             templateItem.setIsRegex(true);
 
-            JSONObject regexReplace = configuration.getJSONObject("regexpReplaces");
+            JSONObject regexReplace = configuration.getJSONObject("regexReplaces");
             Iterator<String> keys = regexReplace.keys();
             while (keys.hasNext()) {
                 String from = keys.next();
                 String to = regexReplace.getString(from);
-                templateItem.addRegexpReplaces(from, to);
+                templateItem.addRegexReplaces(from, to);
             }
         }
 
@@ -139,7 +139,7 @@ public class TemplateItem {
 
                 String expression = variable.has("expression") ? variable.getString("expression") : "";
                 String defaultValue = variable.has("defaultValue") ? variable.getString("defaultValue") : "";
-                Boolean alwaysStopAt = variable.has("alwaysStopAt") ? variable.getBoolean("alwaysStopAt") : false;
+                Boolean alwaysStopAt = variable.has("alwaysStopAt") && variable.getBoolean("alwaysStopAt");
                 vars.put(variableName, new VariableConfiguration(expression, defaultValue, alwaysStopAt));
             }
         }
@@ -173,29 +173,29 @@ public class TemplateItem {
         this.expand = expand;
     }
 
-    public String getFileRegexp() {
-        return fileRegexp;
+    public String getFileRegex() {
+        return fileRegex;
     }
 
-    public void setFileRegexp(String fileRegexp) {
-        this.fileRegexp = fileRegexp;
+    private void setFileRegex(String fileRegex) {
+        this.fileRegex = fileRegex;
     }
 
 
-    public void setIsRegex(Boolean isRegex) {
+    private void setIsRegex(Boolean isRegex) {
         this.isRegex = isRegex;
     }
 
-    public boolean isRegexp() {
-        return this.isRegex == true;
+    public boolean isRegex() {
+        return this.isRegex;
     }
 
-    public HashMap<String, String> getRegexpReplaces() {
-        return regexpReplaces;
+    public HashMap<String, String> getRegexReplaces() {
+        return regexReplaces;
     }
 
-    public void addRegexpReplaces(String from, String to) {
-        this.regexpReplaces.put(from, to);
+    private void addRegexReplaces(String from, String to) {
+        this.regexReplaces.put(from, to);
     }
 
     public HashMap<String, String[]> getTabs() {
@@ -207,7 +207,7 @@ public class TemplateItem {
     }
 
 
-    public void addTab(String name, String[] includeTabs) {
+    private void addTab(String name, String[] includeTabs) {
         this.tabs.put(name, includeTabs);
     }
 
@@ -216,7 +216,7 @@ public class TemplateItem {
         return vars;
     }
 
-    public void setVars(LinkedHashMap<String, VariableConfiguration> vars) {
+    private void setVars(LinkedHashMap<String, VariableConfiguration> vars) {
         this.vars = vars;
     }
 

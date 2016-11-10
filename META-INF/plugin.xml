@@ -5,13 +5,19 @@
 
         Author: Ivan Shcherbak dev@funivan.com
     ]]></description>
-    <version>0.4.6</version>
+    <version>0.4.7</version>
     <vendor url="http://funivan.com/" email="dev@funivan.com">funivan.com</vendor>
     <idea-version since-build="138.184"/>
 
 
     <change-notes><![CDATA[
-
+        <h2>0.4.7</h2>
+        <b>Configuration changed!</b>
+        <ul>
+            <li>fileRegexp changed to fileRegex (Without <i>p</li> at the end)</li>
+            <li>regexpReplaces changed to regexReplaces (Without <i>p</li> inside)</li>
+            <li>You can configure Cursor position manipulating variables priority</li>
+        </ul>
         <h2>0.4.6</h2>
         <ul>
             <li>Remove custom configuration directory</li>
