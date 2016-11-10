@@ -8,23 +8,20 @@ import java.util.LinkedHashMap;
 /**
  * Final configuration of template
  * Contain expanded template, variables configuration and some statistic data (usedShortCodesNum and initialString)
- * <p/>
- * User: ivan
- * Date: 6/23/14
- * Time: 3:37 PM
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class CodeTemplate {
 
-    protected String initialString = "";
+    private String initialString = "";
 
-    protected Integer usedShortCodesNum = 0;
+    private Integer usedShortCodesNum = 0;
 
     protected String code;
 
-    protected LinkedHashMap<String, VariableConfiguration> variablesConfiguration;
+    private LinkedHashMap<String, VariableConfiguration> variablesConfiguration;
 
-    public CodeTemplate(String code, LinkedHashMap<String, VariableConfiguration> variablesConfiguration) {
+    CodeTemplate(String code, LinkedHashMap<String, VariableConfiguration> variablesConfiguration) {
         this.code = code;
         this.variablesConfiguration = variablesConfiguration;
     }
@@ -38,7 +35,7 @@ public class CodeTemplate {
     }
 
 
-    public LinkedHashMap<String, VariableConfiguration> getVariablesConfiguration() {
+    LinkedHashMap<String, VariableConfiguration> getVariablesConfiguration() {
         return variablesConfiguration;
     }
 
@@ -46,7 +43,7 @@ public class CodeTemplate {
         return initialString;
     }
 
-    public void setInitialString(String initialString) {
+    void setInitialString(String initialString) {
         this.initialString = initialString;
     }
 
@@ -54,7 +51,7 @@ public class CodeTemplate {
         return usedShortCodesNum;
     }
 
-    public void setUsedShortCodesNum(Integer usedShortCodesNum) {
+    void setUsedShortCodesNum(Integer usedShortCodesNum) {
         this.usedShortCodesNum = usedShortCodesNum;
     }
 }

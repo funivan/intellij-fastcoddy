@@ -11,7 +11,6 @@ import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandInterface;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.JavaScriptCodeExpandProcessor;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.PhpCodeExpandProcessor;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.Lang.XmlCodeExpandProcessor;
-import org.funivan.intellij.FastCoddy.Settings.PluginSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -27,6 +26,7 @@ import java.util.Map;
 public class FastCoddyAppComponent implements ApplicationComponent {
 
     final public static Logger LOG = Logger.getInstance("Symfony-Plugin");
+    private static final String DEFAULT_FULL_PATH = PathManager.getConfigPath() + "/fast-coddy";
 
     private static final String TEMPLATE_LOCATION = "/resources";
     private Map<String, CodeExpandInterface> codeExpands = null;
@@ -37,11 +37,9 @@ public class FastCoddyAppComponent implements ApplicationComponent {
 
     /**
      * On first initialization copy default template files
-     *
-     * @param forceRewrite
      */
-    public void copyTemplateFiles(Boolean forceRewrite) throws IOException {
-        String defaultPath = PluginSettings.DEFAULT_FULL_PATH;
+    private void copyTemplateFiles(Boolean forceRewrite) throws IOException {
+        String defaultPath = DEFAULT_FULL_PATH;
         File defaultDir = new File(defaultPath);
         if (!defaultDir.exists()) {
             if (!defaultDir.mkdir()) {
@@ -65,9 +63,9 @@ public class FastCoddyAppComponent implements ApplicationComponent {
         InputStream is = FastCoddyAppComponent.class.getClassLoader().getResourceAsStream(phpFileName);
 
 
-        File destinationFile = new File(PluginSettings.DEFAULT_FULL_PATH + "/" + fileName);
+        File destinationFile = new File(DEFAULT_FULL_PATH + "/" + fileName);
 
-        if (destinationFile.isFile() && forceRewrite == false) {
+        if (destinationFile.isFile() && !forceRewrite) {
             return;
         }
 
@@ -104,8 +102,6 @@ public class FastCoddyAppComponent implements ApplicationComponent {
 
     /**
      * Load code expands
-     *
-     * @return
      */
     public Map<String, CodeExpandInterface> getCodeExpand() {
 

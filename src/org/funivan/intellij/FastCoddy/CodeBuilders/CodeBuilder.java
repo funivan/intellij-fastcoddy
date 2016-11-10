@@ -187,12 +187,9 @@ public class CodeBuilder implements CodeBuilderInterface {
                         String tabIndex = (String) keys.next();
                         String[] currentTabGroups = tabs.get(tabIndex);
                         String itemGroup = item.getGroup();
-//                        System.out.println("itemGroup::" + itemGroup);
 
                         Integer tabGroupsLen = currentTabGroups.length;
                         if (tabGroupsLen == 0) {
-                            // use tabs: { TAB2: []} ] to place all items to tab2
-                            Integer testIndex = leftPreviousIndexes + prevIndex - 1;
                             insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
                         } else {
                             for (String placeToGroup : currentTabGroups) {
@@ -229,16 +226,16 @@ public class CodeBuilder implements CodeBuilderInterface {
      *
      * @throws JSONException
      */
-    private List<LocalShortcutItem> getShortcutItems(String typesString, String filePath) throws JSONException {
+    private List<LocalShortcutItem> getShortcutItems(String typedString, String filePath) throws JSONException {
         List<LocalShortcutItem> shortcutsExpand = new ArrayList<>();
 
-        typesString = typesString.trim();
+        typedString = typedString.trim();
 
-        if (typesString.length() == 0) {
+        if (typedString.length() == 0) {
             return shortcutsExpand;
         }
 
-        while (typesString.length() > 0) {
+        while (typedString.length() > 0) {
             Boolean added = false;
 
             for (int index = this.templateItems.size() - 1; index >= 0; index--) {
@@ -249,7 +246,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                     continue;
                 }
 
-                typesString = typesString.trim();
+                typedString = typedString.trim();
 
                 String shortcut = templateItem.getShortcut();
 
@@ -268,7 +265,7 @@ public class CodeBuilder implements CodeBuilderInterface {
                         continue;
                     }
 
-                    Matcher matcher = pattern.matcher(typesString);
+                    Matcher matcher = pattern.matcher(typedString);
 
                     if (matcher.find()) {
                         String expandToString = templateItem.getExpand();
@@ -286,7 +283,7 @@ public class CodeBuilder implements CodeBuilderInterface {
 
 
                             if (groupIndex == groupsNum) {
-                                typesString = groupString;
+                                typedString = groupString;
                             } else {
 
                                 String newGroupString = regexReplace.get(groupString);
@@ -304,10 +301,10 @@ public class CodeBuilder implements CodeBuilderInterface {
                     }
 
 
-                } else if (typesString.indexOf(shortcut) == 0) {
+                } else if (typedString.indexOf(shortcut) == 0) {
                     LocalShortcutItem localShortcutItem = new LocalShortcutItem(index, templateItem.getExpand(), templateItem);
                     shortcutsExpand.add(localShortcutItem);
-                    typesString = typesString.substring(shortcut.length());
+                    typedString = typedString.substring(shortcut.length());
 
                     added = true;
                     break;

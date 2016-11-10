@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 
 /**
  * Template item defined in the configuration file
+ *
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class TemplateItem {
     /**

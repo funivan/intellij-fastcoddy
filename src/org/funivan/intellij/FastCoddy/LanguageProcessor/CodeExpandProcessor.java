@@ -9,26 +9,24 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.PsiFile;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilderInterface;
 import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
 /**
- * User: ivan
- * Date: 12/25/13
- * Time: 10:58 AM
- * To change this template use File | SettingsService | File Templates.
+ * @author Ivan Scherbak <dev@funivan>
  */
 public abstract class CodeExpandProcessor implements CodeExpandInterface {
 
-    public CodeBuilderInterface codeBuilder;
-    protected String[] delimiterSymbols;
+    private CodeBuilderInterface codeBuilder;
+    private String[] delimiterSymbols;
 
     public CodeExpandProcessor(CodeBuilderInterface codeBuilder) {
         this.codeBuilder = codeBuilder;
         this.delimiterSymbols = getDelimiterSymbols();
     }
 
-    public final CodeBuilderInterface getCodeBuilder() {
+    private CodeBuilderInterface getCodeBuilder() {
         return codeBuilder;
     }
 
@@ -42,9 +40,7 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
 
         PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(anActionEvent.getDataContext());
 
-        CodeTemplate codeTemplate = this.getCodeBuilder().expandCodeFromShortcut(shortCode, psiFile);
-
-        return codeTemplate;
+        return this.getCodeBuilder().expandCodeFromShortcut(shortCode, psiFile);
     }
 
     /**
@@ -61,15 +57,16 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
      * }
      * ```
      * This method detect typed short code and return `!e&isf`
-     *
-     * @param anActionEvent
-     * @return
      */
+    @Nullable
     private String detectShortCode(AnActionEvent anActionEvent) {
         DataContext dataContext = anActionEvent.getDataContext();
         Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
 
 
+        if (editor == null) {
+            return null;
+        }
         int offset = editor.getCaretModel().getOffset();
         int lineStart = editor.getCaretModel().getVisualLineStart();
 
@@ -96,7 +93,7 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
                 shortCode = selectionMode.getSelectedText();
 
                 String symbol = shortCode.substring(0, 1);
-                if (validSymbolForCapture(symbol) == false) {
+                if (!validSymbolForCapture(symbol)) {
                     captureItem = false;
                     selectionMode.setSelection(leftPosition + 1, rightPosition);
                 }
@@ -114,13 +111,8 @@ public abstract class CodeExpandProcessor implements CodeExpandInterface {
     }
 
 
-    protected Boolean validSymbolForCapture(String symbol) {
-
-        if (Arrays.asList(this.delimiterSymbols).contains(symbol.toString())) {
-            return false;
-        }
-
-        return true;
+    private Boolean validSymbolForCapture(String symbol) {
+        return !Arrays.asList(this.delimiterSymbols).contains(symbol);
     }
 
 }

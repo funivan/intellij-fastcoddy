@@ -14,8 +14,8 @@
         <h2>0.4.7</h2>
         <b>Configuration changed!</b>
         <ul>
-            <li>fileRegexp changed to fileRegex (Without <i>p</li> at the end)</li>
-            <li>regexpReplaces changed to regexReplaces (Without <i>p</li> inside)</li>
+            <li>fileRegexp changed to fileRegex (Without <i> p</i> at the end)</li>
+            <li>regexpReplaces changed to regexReplaces (Without <i>p</i> inside)</li>
             <li>You can configure Cursor position manipulating variables priority</li>
         </ul>
         <h2>0.4.6</h2>
@@ -130,7 +130,7 @@
                                  displayName="FastCoddy Plugin"/>
 
 
-        <applicationService serviceImplementation="org.funivan.intellij.FastCoddy.Settings.PluginSettings"/>
+
 
 
     </extensions>

@@ -6,13 +6,12 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nullable;
 
 /**
- *
- * @author
+ * @author Ivan Scherbak <dev@funivan>
  */
 @State(
         name = "CoddyUsageStatistic",
         storages = {
-                @Storage(id = "default", file = StoragePathMacros.APP_CONFIG + "/fast-coddy.statistics.xml")
+                @Storage(file = StoragePathMacros.APP_CONFIG + "/fast-coddy.statistics.xml")
         }
 )
 
@@ -30,7 +29,7 @@ public class UsageStatistic implements PersistentStateComponent<UsageStatistic> 
 
     public Integer expandedChars = 0;
 
-    public long firstStart = 0;
+    private long firstStart = 0;
 
     public static void used() {
         FeatureUsageTracker.getInstance().triggerFeatureUsed(TemplatesProductivityFeatureProvider.LIVE_TEMPLATE_INVOKE);

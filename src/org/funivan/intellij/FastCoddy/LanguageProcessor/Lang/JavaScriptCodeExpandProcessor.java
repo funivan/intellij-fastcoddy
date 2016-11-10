@@ -4,7 +4,7 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilderInterface;
 import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandProcessor;
 
 /**
- * Created by ivan on 7/31/14.
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class JavaScriptCodeExpandProcessor extends CodeExpandProcessor {
 

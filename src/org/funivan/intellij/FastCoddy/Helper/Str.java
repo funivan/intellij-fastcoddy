@@ -1,7 +1,7 @@
 package org.funivan.intellij.FastCoddy.Helper;
 
 /**
- * Created by ivan on 03.06.16.
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class Str {
 

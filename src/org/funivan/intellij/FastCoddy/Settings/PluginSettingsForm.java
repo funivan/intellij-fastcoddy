@@ -25,23 +25,26 @@ public class PluginSettingsForm implements Configurable {
         UsageStatistic statistic = UsageStatistic.getSettings();
 
 
-        String result = "You have used this action about " + Str.plural(statistic.used, "time", "times")
+        String result = "";
 
-                + " This plugin made about " +
-                (Float.toString((statistic.expandedChars * 100) / (statistic.typedChars + statistic.expandedChars)))
-                + "% of your work. "
-                + "\nYou typed " + Str.plural(statistic.typedChars, "symbol", "symbols")
-                + " and plugin expand this to " + statistic.expandedChars + " chars";
+        result += "Hello\n";
+
+        result += "You have used this action about " + Str.plural(statistic.used, "time", "times") + " ";
+        result += "This plugin made about " + (Float.toString((statistic.expandedChars * 100) / (statistic.typedChars + statistic.expandedChars))) + "% of your work. \n";
+
+        result += "You typed " + Str.plural(statistic.typedChars, "symbol", "symbols") + " and plugin expand this to " + statistic.expandedChars + " chars. ";
+        result += "According to the standard live templates system you save about " + Str.plural(statistic.hotKeysEconomy, "keystroke", "keystrokes") + "\n";
 
         if (statistic.maximumShortCodes > 3) {
-            result = result + "\nYou are definitely cool coder. ";
+            result = result + "You are definitely cool coder. ";
         }
 
         result = result + "Max short codes inside you template is about " + statistic.maximumShortCodes;
 
         result = result + "\n\nP.S. Number of templates you are using: " + statistic.usedShortCodes;
 
-        statPane.setText("Hello\n" + result);
+        statPane.setText(result);
+
         return panel1;
     }
 

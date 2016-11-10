@@ -11,15 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: ivan
- * Date: 6/24/14
- * Time: 1:54 PM
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class TemplatesProductivityFeatureProvider extends ProductivityFeaturesProvider implements com.intellij.openapi.components.ApplicationComponent {
 
     private static final String GROUP_DESCRIPTOR_ID = "fast-coddy.feature";
 
-    public static final String LIVE_TEMPLATE_INVOKE = "fast-coddy.template.invoke";
+    static final String LIVE_TEMPLATE_INVOKE = "fast-coddy.template.invoke";
 
 
     private FeatureDescriptor[] descriptors;
@@ -27,13 +25,14 @@ public class TemplatesProductivityFeatureProvider extends ProductivityFeaturesPr
     public void disposeComponent() {
     }
 
+    @NotNull
     public String getComponentName() {
         return "TemplatesProductivityFeatureProvider";
     }
 
     public void initComponent() {
 
-        List<FeatureDescriptor> list = new ArrayList<FeatureDescriptor>();
+        List<FeatureDescriptor> list = new ArrayList<>();
         list.add(createFeatureDescriptor());
 
 

@@ -8,14 +8,13 @@ import com.intellij.psi.PsiElement;
 import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
 
 /**
- * @author funivan <dev@funivan.com>
- *         Date: 12/24/13
+ * @author Ivan Scherbak <dev@funivan>
  */
 public class InsertLiveTemplateAction {
 
     protected IntellijLiveTemplate template;
-    protected PsiElement el;
-    protected Editor editor;
+    private PsiElement el;
+    private Editor editor;
 
     public InsertLiveTemplateAction(IntellijLiveTemplate template, PsiElement el, Editor editor) {
         this.template = template;
@@ -30,8 +29,6 @@ public class InsertLiveTemplateAction {
             public void run() {
                 CommandProcessor.getInstance().executeCommand(el.getProject(), new Runnable() {
                     public void run() {
-
-//                        System.out.println("deletion start");
 
                         int selectionStart = editor.getSelectionModel().getSelectionStart();
                         int selectionEnd = editor.getSelectionModel().getSelectionEnd();
