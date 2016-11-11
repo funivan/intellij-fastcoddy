@@ -25,8 +25,6 @@ public class UsageStatistic implements PersistentStateComponent<UsageStatistic> 
 
     public Integer typedChars = 0;
 
-    public Integer hotKeysEconomy = 0;
-
     public Integer expandedChars = 0;
 
     private long firstStart = 0;
@@ -44,7 +42,6 @@ public class UsageStatistic implements PersistentStateComponent<UsageStatistic> 
             statistic.maximumShortCodes = shortCodesNum;
         }
 
-        statistic.hotKeysEconomy = statistic.hotKeysEconomy + shortCodesNum - 1;
         statistic.usedShortCodes += shortCodesNum;
     }
 
