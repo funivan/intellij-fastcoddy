@@ -26,7 +26,6 @@ public class FastCoddyAppComponent implements ApplicationComponent {
     final public static Logger LOG = Logger.getInstance("Symfony-Plugin");
     private static final String DEFAULT_FULL_PATH = PathManager.getConfigPath() + "/fast-coddy";
 
-    private static final String TEMPLATE_LOCATION = "/resources";
     private Map<String, CodeExpandInterface> codeExpands = null;
 
     public static FastCoddyAppComponent getInstance() {
@@ -56,13 +55,13 @@ public class FastCoddyAppComponent implements ApplicationComponent {
     }
 
     private void copyTemplate(Boolean forceRewrite, String fileName) {
-        String phpFileName = TEMPLATE_LOCATION + "/" + fileName;
-
-        InputStream is = FastCoddyAppComponent.class.getClassLoader().getResourceAsStream(phpFileName);
-
+        InputStream is = FastCoddyAppComponent.class.getClassLoader().getResourceAsStream(fileName);
 
         File destinationFile = new File(DEFAULT_FULL_PATH + "/" + fileName);
-
+        if (is == null) {
+            System.out.println("fs is null");
+            return;
+        }
         if (destinationFile.isFile() && !forceRewrite) {
             return;
         }
@@ -104,13 +103,9 @@ public class FastCoddyAppComponent implements ApplicationComponent {
     public Map<String, CodeExpandInterface> getCodeExpand() throws JSONException {
 
         if (this.codeExpands == null) {
-
-
             String dir = PathManager.getConfigPath() + "/fast-coddy";
 
-
             codeExpands = new HashMap<>();
-
 
             CodeBuilder phpCodeBuilder = new CodeBuilder(dir + "/php.json");
             codeExpands.put("PHP", new CodeExpandProcessor(phpCodeBuilder));

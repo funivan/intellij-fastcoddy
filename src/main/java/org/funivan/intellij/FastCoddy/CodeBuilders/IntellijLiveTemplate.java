@@ -27,12 +27,15 @@ public class IntellijLiveTemplate implements CustomLiveTemplate {
     }
 
     @Nullable
-    @Override
     public String computeTemplateKey(@NotNull CustomTemplateCallback customTemplateCallback) {
         return null;
     }
 
-    @Override
+    @java.lang.Override
+    public boolean isApplicable(@NotNull CustomTemplateCallback customTemplateCallback, int i, boolean b) {
+        return false;
+    }
+
     public boolean isApplicable(PsiFile psiFile, int i, boolean b) {
         return false;
     }

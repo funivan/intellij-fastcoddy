@@ -1,5 +1,4 @@
 package org.funivan.intellij.FastCoddy.Actions;
-
 import com.intellij.codeInsight.template.CustomTemplateCallback;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;

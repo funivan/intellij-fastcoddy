@@ -31,29 +31,20 @@ public class ExpandAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-
         DataContext dataContext = anActionEvent.getDataContext();
         Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
-
         if (editor == null) {
             return;
         }
-
         Project project = editor.getProject();
-
         if (project == null) {
             return;
         }
-
-
         VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
-
         if (virtualFile == null) {
             return;
         }
-
         PsiFile psiFile = PsiManager.getInstance(editor.getProject()).findFile(virtualFile);
-
         if (psiFile == null) {
             return;
         }
@@ -61,21 +52,15 @@ public class ExpandAction extends AnAction {
         int offset = editor.getCaretModel().getOffset() - 1;
 
         PsiElement el = psiFile.findElementAt(offset);
-
         if (el == null) {
             return;
         }
-
         String languageId = el.getLanguage().getID();
-
-
         // check if we have injected part of string
         PsiElement injectedElementAt = InjectedLanguageManager.getInstance(psiFile.getProject()).findInjectedElementAt(psiFile, offset);
         if (injectedElementAt != null) {
             languageId = injectedElementAt.getLanguage().getID();
         }
-
-
         Map<String, CodeExpandInterface> codeExpands = null;
         try {
             codeExpands = FastCoddyAppComponent.getInstance().getCodeExpand();
@@ -105,18 +90,11 @@ public class ExpandAction extends AnAction {
                 editor.getSelectionModel().removeSelection();
                 editor.getCaretModel().moveToOffset(initialOffset);
             }
-
             return;
         }
-
-
         IntellijLiveTemplate template = new IntellijLiveTemplate(newCodeTemplate);
         InsertLiveTemplateAction insertAction = new InsertLiveTemplateAction(template, el, editor);
-
-
         insertAction.run();
-
-
         UsageStatistic.used();
         UsageStatistic.usedShortCodes(newCodeTemplate.getUsedShortCodesNum());
         UsageStatistic.expandedChars(newCodeTemplate.getCode().length());

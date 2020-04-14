@@ -1,7 +1,10 @@
 package org.funivan.intellij.FastCoddy.Productivity;
 
 import com.intellij.featureStatistics.FeatureUsageTracker;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,12 +12,11 @@ import org.jetbrains.annotations.Nullable;
  * @author Ivan Scherbak <dev@funivan>
  */
 @State(
-        name = "CoddyUsageStatistic",
-        storages = {
-                @Storage(file = StoragePathMacros.APP_CONFIG + "/fast-coddy.statistics.xml")
-        }
+    name = "CoddyUsageStatistic",
+    storages = {
+        @Storage("fast-coddy.statistics.xml")
+    }
 )
-
 public class UsageStatistic implements PersistentStateComponent<UsageStatistic> {
 
     public Integer used = 0;
