@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class FileHelper {
 

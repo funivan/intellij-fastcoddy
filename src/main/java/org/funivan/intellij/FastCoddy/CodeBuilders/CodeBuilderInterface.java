@@ -5,7 +5,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 interface CodeBuilderInterface {
 

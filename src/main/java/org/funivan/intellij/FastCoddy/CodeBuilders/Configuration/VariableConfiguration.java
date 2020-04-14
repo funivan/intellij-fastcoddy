@@ -1,7 +1,7 @@
 package org.funivan.intellij.FastCoddy.CodeBuilders.Configuration;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class VariableConfiguration {
 

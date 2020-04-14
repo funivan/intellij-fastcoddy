@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class TemplatesProductivityFeatureProvider extends ProductivityFeaturesProvider implements com.intellij.openapi.components.ApplicationComponent {
 

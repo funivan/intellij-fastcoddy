@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import org.funivan.intellij.FastCoddy.CodeBuilders.IntellijLiveTemplate;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class InsertLiveTemplateAction {
 

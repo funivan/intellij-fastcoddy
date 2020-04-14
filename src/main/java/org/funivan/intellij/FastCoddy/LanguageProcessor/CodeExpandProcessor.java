@@ -12,7 +12,7 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.CodeTemplate;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class CodeExpandProcessor implements CodeExpandInterface {
 

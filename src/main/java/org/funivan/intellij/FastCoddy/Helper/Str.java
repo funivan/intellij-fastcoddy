@@ -1,7 +1,7 @@
 package org.funivan.intellij.FastCoddy.Helper;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class Str {
 

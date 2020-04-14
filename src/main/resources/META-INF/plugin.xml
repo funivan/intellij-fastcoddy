@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
     <name>FastCoddy</name>
     <description><![CDATA[
         Improve your productivity.
@@ -7,7 +7,7 @@
     ]]></description>
     <version>0.4.7</version>
     <vendor url="https://github.com/funivan/" email="alotofall@gmail.com">Ivan Shcherbak [funivan]</vendor>
-    <idea-version since-build="138.184"/>
+    <idea-version since-build="181"/>
     <depends>com.intellij.modules.platform</depends>
 
     <actions>

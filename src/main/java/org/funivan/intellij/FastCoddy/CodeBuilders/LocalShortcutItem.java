@@ -5,7 +5,7 @@ import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem;
 /**
  * Represent one item from typed string
  *
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 class LocalShortcutItem {
     private TemplateItem templateItem;

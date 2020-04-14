@@ -24,7 +24,7 @@ import org.funivan.intellij.FastCoddy.Productivity.UsageStatistic;
 import java.util.Map;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class ExpandAction extends AnAction {
 
