@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 /**
  * Template item defined in the configuration file
  *
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class TemplateItem {
     /**

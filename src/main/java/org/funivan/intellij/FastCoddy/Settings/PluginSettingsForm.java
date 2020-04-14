@@ -30,8 +30,10 @@ public class PluginSettingsForm implements Configurable {
         result += "Hello\n";
 
         result += "You have used this action about " + Str.plural(statistic.used, "time", "times") + " ";
-        result += "This plugin made about " + (Float.toString((statistic.expandedChars * 100) / (statistic.typedChars + statistic.expandedChars))) + "% of your work. \n";
-
+        int chars = statistic.typedChars + statistic.expandedChars;
+        if (chars > 0) {
+            result += "This plugin made about " + (Float.toString((statistic.expandedChars * 100) / chars)) + "% of your work. \n";
+        }
         result += "You typed " + Str.plural(statistic.typedChars, "symbol", "symbols") + " and plugin expand this to " + statistic.expandedChars + " chars. ";
         result += "According to the standard live templates system you save about " + Str.plural(statistic.usedShortCodes - statistic.used, "keystroke", "keystrokes") + "\n";
 

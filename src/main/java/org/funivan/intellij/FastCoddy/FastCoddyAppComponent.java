@@ -19,7 +19,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class FastCoddyAppComponent implements ApplicationComponent {
 
@@ -36,8 +36,7 @@ public class FastCoddyAppComponent implements ApplicationComponent {
      * On first initialization copy default template files
      */
     private void copyTemplateFiles(Boolean forceRewrite) throws IOException {
-        String defaultPath = DEFAULT_FULL_PATH;
-        File defaultDir = new File(defaultPath);
+        File defaultDir = new File(DEFAULT_FULL_PATH);
         if (!defaultDir.exists()) {
             if (!defaultDir.mkdir()) {
                 throw new IOException("Can not create configuration directory");

@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
  * Final configuration of template
  * Contain expanded template, variables configuration and some statistic data (usedShortCodesNum and initialString)
  *
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class CodeTemplate {
 

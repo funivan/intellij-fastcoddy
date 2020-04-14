@@ -11,7 +11,7 @@ import com.intellij.ui.awt.RelativePoint;
 import org.funivan.intellij.FastCoddy.FastCoddyAppComponent;
 
 /**
- * @author Ivan Scherbak <dev@funivan>
+ * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 public class ReloadAction extends AnAction {
 
