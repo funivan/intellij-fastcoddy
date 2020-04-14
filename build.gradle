@@ -6,16 +6,9 @@ buildscript {
 }
 plugins {
     id 'org.jetbrains.intellij' version '0.4.9'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
     id 'com.github.ben-manes.versions' version '0.21.0'
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
 intellij {
     version ideaVersion
     sandboxDirectory project.rootDir.canonicalPath + "/build/idea-sandbox"
@@ -37,7 +30,6 @@ patchPluginXml {
 }
 apply plugin: "org.jetbrains.intellij"
 apply plugin: "java"
-apply plugin: "kotlin"
 
 wrapper {
     gradleVersion = '6.3'
