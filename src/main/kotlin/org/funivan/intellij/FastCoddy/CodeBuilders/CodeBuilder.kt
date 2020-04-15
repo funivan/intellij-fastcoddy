@@ -24,8 +24,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
     override fun expandCodeFromShortcut(shortcut: String, psiFile: PsiFile?): CodeTemplate? {
         var newCodeTemplate: CodeTemplate? = null
         try {
-            val filePath = psiFile!!.virtualFile.path
-            val list = getShortcutItems(shortcut, filePath)
+            val list = getShortcutItems(shortcut)
             newCodeTemplate = getNewCode(list)
             newCodeTemplate.initialString = shortcut
             newCodeTemplate.usedShortCodesNum = list.size
@@ -95,7 +94,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
             variables.forEach { key, value -> variablesConfiguration[key] = value }
 
             // prepare new template
-            shortcutTpl = shortcutTpl!!.replace("\$TAB([0-9]+)\\$".toRegex(), "\$TAB_" + index + "_$1\\$")
+            shortcutTpl = shortcutTpl.replace("\$TAB([0-9]+)\\$".toRegex(), "\$TAB_" + index + "_$1\\$")
             if (newCode.isEmpty() || index == 0) {
                 newCode = shortcutTpl
             } else {
@@ -106,12 +105,12 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
 
 
             // refresh end position
-            newCode = newCode.replace("\$END\$".toRegex(), "")
+            newCode = newCode.replace(Regex("\$END\$"), "")
             newCode += "\$END$"
         }
-        newCode = newCode.replace("\$LAST\$".toRegex(), "")
-        newCode = newCode.replace("\$END\$".toRegex(), "")
-        newCode = newCode.replace("(\$TAB_[0-9]+_[0-9]+\\$)+".toRegex(), "$1")
+        newCode = newCode.replace(Regex("\$LAST\$"), "")
+        newCode = newCode.replace(Regex("\$END\$"), "")
+        newCode = newCode.replace(Regex("(\$TAB_[0-9]+_[0-9]+\\$)+"), "$1")
 
 
         // remove previous inserted positions
@@ -132,30 +131,27 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
             }
             val previousLocalShortcutItem = shortCodeConfiguration[leftPreviousIndexes]
             val prevItem = templateItems[previousLocalShortcutItem.key]
-            if (prevItem != null) {
-//                System.out.println("Prev item:" + prevItem.getShortcut());
-                if (prevItem.hasTabs()) {
-                    // detect in what place we need to insert our code
-                    val tabs = prevItem.tabs
-                    val keys: Iterator<*> = tabs.keys.iterator()
-                    var detectPosition = false
-                    if (insertPosition != "") {
-                        break
-                    }
-                    while (keys.hasNext() && !detectPosition) {
-                        val tabIndex = keys.next() as String
-                        val currentTabGroups = tabs[tabIndex]
-                        val itemGroup = item.group
-                        val tabGroupsLen = currentTabGroups!!.size
-                        if (tabGroupsLen == 0) {
-                            insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + leftPreviousIndexes + '_') + "$"
-                        } else {
-                            for (placeToGroup in currentTabGroups) {
-                                if (placeToGroup == itemGroup) {
-                                    insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + leftPreviousIndexes + '_') + "$"
-                                    detectPosition = true
-                                    break
-                                }
+            if (prevItem.hasTabs()) {
+                // detect in what place we need to insert our code
+                val tabs = prevItem.tabs
+                val keys: Iterator<*> = tabs.keys.iterator()
+                var detectPosition = false
+                if (insertPosition != "") {
+                    break
+                }
+                while (keys.hasNext() && !detectPosition) {
+                    val tabIndex = keys.next() as String
+                    val currentTabGroups = tabs[tabIndex]
+                    val itemGroup = item.group
+                    val tabGroupsLen = currentTabGroups!!.size
+                    if (tabGroupsLen == 0) {
+                        insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + leftPreviousIndexes + '_') + "$"
+                    } else {
+                        for (placeToGroup in currentTabGroups) {
+                            if (placeToGroup == itemGroup) {
+                                insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + leftPreviousIndexes + '_') + "$"
+                                detectPosition = true
+                                break
                             }
                         }
                     }
@@ -179,18 +175,18 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
      *
      * In this method we detect pars from string according to our configuration
      */
-    private fun getShortcutItems(typedString: String, filePath: String): List<LocalShortcutItem> {
-        var typedString = typedString
+    private fun getShortcutItems(typedString: String): List<LocalShortcutItem> {
+        var typedStr = typedString
         val shortcutsExpand: MutableList<LocalShortcutItem> = ArrayList()
-        typedString = typedString.trim { it <= ' ' }
-        if (typedString.length == 0) {
+        typedStr = typedStr.trim { it <= ' ' }
+        if (typedStr.length == 0) {
             return shortcutsExpand
         }
-        while (typedString.length > 0) {
+        while (typedStr.length > 0) {
             var added = false
             for (index in templateItems.indices.reversed()) {
                 val templateItem = templateItems[index]
-                typedString = typedString.trim { it <= ' ' }
+                typedStr = typedStr.trim { it <= ' ' }
                 val shortcut = templateItem.shortcut
                 if (templateItem.isRegex) {
                     val regex = "^$shortcut(.*)$"
@@ -203,7 +199,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
                     if (pattern == null) {
                         continue
                     }
-                    val matcher = pattern.matcher(typedString)
+                    val matcher = pattern.matcher(typedStr)
                     if (matcher.find()) {
                         var expandToString = templateItem.expand
                         val regexReplace = templateItem.regexReplaces
@@ -212,13 +208,13 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
                             var groupString = matcher.group(groupIndex)
                             groupString = groupString ?: ""
                             if (groupIndex == groupsNum) {
-                                typedString = groupString
+                                typedStr = groupString
                             } else {
                                 val newGroupString = regexReplace[groupString]
                                 if (newGroupString != null) {
                                     groupString = newGroupString
                                 }
-                                expandToString = expandToString!!.replace("\\$" + groupIndex, groupString)
+                                expandToString = expandToString.replace("\\$" + groupIndex, groupString)
                             }
                         }
                         val localShortcutItem = LocalShortcutItem(index, expandToString, templateItem)
@@ -226,10 +222,10 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
                         added = true
                         break
                     }
-                } else if (typedString.indexOf(shortcut!!) == 0) {
+                } else if (typedStr.indexOf(shortcut) == 0) {
                     val localShortcutItem = LocalShortcutItem(index, templateItem.expand, templateItem)
                     shortcutsExpand.add(localShortcutItem)
-                    typedString = typedString.substring(shortcut.length)
+                    typedStr = typedStr.substring(shortcut.length)
                     added = true
                     break
                 }
