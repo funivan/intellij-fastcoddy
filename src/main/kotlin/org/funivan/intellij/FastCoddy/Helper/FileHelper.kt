@@ -1,38 +1,31 @@
-package org.funivan.intellij.FastCoddy.Helper;
+package org.funivan.intellij.FastCoddy.Helper
 
-
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.File
+import java.io.FileReader
+import java.io.IOException
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-public class FileHelper {
-
+object FileHelper {
     /**
      * Helper function for reading file
      */
-    @Nullable
-    public static String getFileContent(String filename) {
-        String content = null;
-        File file = new File(filename);
-
+    fun getFileContent(filename: String): String {
+        var content: String = ""
+        val file = File(filename)
         if (!file.exists()) {
-            return null;
+            return ""
         }
-
         try {
-            FileReader reader = new FileReader(file);
-            char[] chars = new char[(int) file.length()];
-            reader.read(chars);
-            content = new String(chars);
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            val reader = FileReader(file)
+            val chars = CharArray(file.length().toInt())
+            reader.read(chars)
+            content = String(chars)
+            reader.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return content;
+        return content
     }
 }

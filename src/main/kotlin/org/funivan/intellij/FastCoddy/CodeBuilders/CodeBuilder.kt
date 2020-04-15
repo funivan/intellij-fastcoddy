@@ -1,226 +1,173 @@
-package org.funivan.intellij.FastCoddy.CodeBuilders;
+package org.funivan.intellij.FastCoddy.CodeBuilders
 
-
-import com.intellij.psi.PsiFile;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem;
-import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration;
-import org.funivan.intellij.FastCoddy.FastCoddyAppComponent;
-import org.funivan.intellij.FastCoddy.Helper.FileHelper;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import com.intellij.psi.PsiFile
+import org.codehaus.jettison.json.JSONException
+import org.codehaus.jettison.json.JSONObject
+import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem
+import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration
+import org.funivan.intellij.FastCoddy.FastCoddyAppComponent
+import org.funivan.intellij.FastCoddy.Helper.FileHelper
+import java.util.*
+import java.util.regex.Pattern
+import java.util.regex.PatternSyntaxException
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-public class CodeBuilder implements CodeBuilderInterface {
-
-
-    private ArrayList<TemplateItem> templateItems;
-    private ArrayList<String> delimiters;
-
-    public CodeBuilder(String filePath) throws JSONException {
-        this.templateItems = new ArrayList<>();
-        this.delimiters = new ArrayList<>();
-        this.loadConfigFromFile(filePath);
-
-    }
-
+class CodeBuilder(filePath: String) : CodeBuilderInterface {
+    private val templateItems: ArrayList<TemplateItem>
+    val delimiters: ArrayList<String?>
 
     /**
      * Return new code string
      */
-    public CodeTemplate expandCodeFromShortcut(String shortcut, PsiFile psiFile) {
-
-
-        CodeTemplate newCodeTemplate = null;
-
+    override fun expandCodeFromShortcut(shortcut: String, psiFile: PsiFile?): CodeTemplate? {
+        var newCodeTemplate: CodeTemplate? = null
         try {
-
-            String filePath = psiFile.getVirtualFile().getPath();
-            List<LocalShortcutItem> list = this.getShortcutItems(shortcut, filePath);
-
-            newCodeTemplate = this.getNewCode(list);
-            newCodeTemplate.setInitialString(shortcut);
-            newCodeTemplate.setUsedShortCodesNum(list.size());
-        } catch (JSONException e) {
-            e.printStackTrace();
+            val filePath = psiFile!!.virtualFile.path
+            val list = getShortcutItems(shortcut, filePath)
+            newCodeTemplate = getNewCode(list)
+            newCodeTemplate.initialString = shortcut
+            newCodeTemplate.usedShortCodesNum = list.size
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
-
-        return newCodeTemplate;
+        return newCodeTemplate
     }
 
-    private void loadConfigFromFile(String filePath) throws JSONException {
-        String jsonString = FileHelper.getFileContent(filePath);
-
-        if (jsonString == null || jsonString.isEmpty()) {
-            return;
+    private fun loadConfigFromFile(filePath: String) {
+        val jsonString = FileHelper.getFileContent(filePath)
+        if (jsonString.isEmpty()) {
+            return
         }
-
-        JSONObject obj = new JSONObject(jsonString);
-
+        val obj = JSONObject(jsonString)
         if (!obj.has("items")) {
-            throw new JSONException("Empty items section inside the file: " + filePath);
+            throw JSONException("Empty items section inside the file: $filePath")
         }
-
         if (!obj.has("delimiters")) {
-            throw new JSONException("Empty delimiters section inside the file: " + filePath);
+            throw JSONException("Empty delimiters section inside the file: $filePath")
         }
-
-        JSONArray delimiters = obj.getJSONArray("delimiters");
-
-        for (int delimiterIndex = delimiters.length() - 1; delimiterIndex >= 0; delimiterIndex--) {
-            String itemDelimiter = delimiters.getString(delimiterIndex);
-            this.delimiters.add(itemDelimiter);
+        val delimiters = obj.getJSONArray("delimiters")
+        for (delimiterIndex in delimiters.length() - 1 downTo 0) {
+            val itemDelimiter = delimiters.getString(delimiterIndex)
+            this.delimiters.add(itemDelimiter)
         }
-
-
-        JSONArray itemTemplates = obj.getJSONArray("items");
-
-
-        for (int i = itemTemplates.length() - 1; i >= 0; i--) {
-            JSONObject itemConfiguration = itemTemplates.getJSONObject(i);
-            TemplateItem templateItem = TemplateItem.initFromJson(itemConfiguration);
-
-            if (templateItem != null) {
-                this.templateItems.add(templateItem);
+        val itemTemplates = obj.getJSONArray("items")
+        for (i in itemTemplates.length() - 1 downTo 0) {
+            val itemConfiguration = itemTemplates.getJSONObject(i)
+            if (itemConfiguration is JSONObject) {
+                val templateItem = TemplateItem.initFromJson(itemConfiguration)
+                if (templateItem != null) {
+                    templateItems.add(templateItem)
+                }
             }
         }
-
-
     }
 
     /**
-     * <p/>
+     *
+     *
      * we have string if!e
      * iterate
      * if is top than i in our config so take if and cut is
-     * <p/>
+     *
+     *
      * we have string !e
      * iterate over config and match. ! is matched so cut it
-     * <p/>
+     *
+     *
      * we have string e
-     * <p/>
+     *
+     *
      */
-    private CodeTemplate getNewCode(List<LocalShortcutItem> localShortcutItemList) throws JSONException {
-
-        String newCode = "";
-        LinkedHashMap<String, VariableConfiguration> variablesConfiguration = new LinkedHashMap<>();
-
-
-        List<String> insertedTabs = new ArrayList<>();
-        for (int index = 0; index < localShortcutItemList.size(); index++) {
-
-            LocalShortcutItem localShortcutItem = localShortcutItemList.get(index);
-
-            Integer shortcutKey = localShortcutItem.getKey();
-            String shortcutTpl = localShortcutItem.getCode();
-            TemplateItem item = this.templateItems.get(shortcutKey);
+    private fun getNewCode(localShortcutItemList: List<LocalShortcutItem>): CodeTemplate {
+        var newCode = ""
+        val variablesConfiguration = LinkedHashMap<String, VariableConfiguration>()
+        val insertedTabs: MutableList<String> = ArrayList()
+        for (index in localShortcutItemList.indices) {
+            val localShortcutItem = localShortcutItemList[index]
+            val shortcutKey = localShortcutItem.key
+            var shortcutTpl = localShortcutItem.code
+            val item = templateItems[shortcutKey]
 
             // merge variables
-            LinkedHashMap<String, VariableConfiguration> variables = localShortcutItem.getTemplateItem().getVars();
-            for (String key : variables.keySet()) {
-                variablesConfiguration.put(key, variables.get(key));
-            }
-
+            val variables = localShortcutItem.templateItem.vars
+            variables.forEach { key, value -> variablesConfiguration[key] = value }
 
             // prepare new template
-            shortcutTpl = shortcutTpl.replaceAll("\\$TAB([0-9]+)\\$", "\\$TAB_" + index + "_$1\\$");
-
+            shortcutTpl = shortcutTpl!!.replace("\$TAB([0-9]+)\\$".toRegex(), "\$TAB_" + index + "_$1\\$")
             if (newCode.isEmpty() || index == 0) {
-                newCode = shortcutTpl;
+                newCode = shortcutTpl
             } else {
-                Integer prevIndex = index;
-                String insertPosition = getInsertPosition(localShortcutItemList, item, prevIndex);
-                newCode = newCode.replace(insertPosition, shortcutTpl + insertPosition);
-                insertedTabs.add(insertPosition);
+                val insertPosition = getInsertPosition(localShortcutItemList, item, index)
+                newCode = newCode.replace(insertPosition, shortcutTpl + insertPosition)
+                insertedTabs.add(insertPosition)
             }
 
 
             // refresh end position
-            newCode = newCode.replaceAll("\\$END\\$", "");
-            newCode += "$END$";
+            newCode = newCode.replace("\$END\$".toRegex(), "")
+            newCode += "\$END$"
         }
-
-        newCode = newCode.replaceAll("\\$LAST\\$", "");
-        newCode = newCode.replaceAll("\\$END\\$", "");
-        newCode = newCode.replaceAll("(\\$TAB_[0-9]+_[0-9]+\\$)+", "$1");
+        newCode = newCode.replace("\$LAST\$".toRegex(), "")
+        newCode = newCode.replace("\$END\$".toRegex(), "")
+        newCode = newCode.replace("(\$TAB_[0-9]+_[0-9]+\\$)+".toRegex(), "$1")
 
 
         // remove previous inserted positions
-        for (String tabId : insertedTabs) {
-            newCode = newCode.replace(tabId, "");
+        for (tabId in insertedTabs) {
+            newCode = newCode.replace(tabId, "")
         }
-
-        return new CodeTemplate(newCode, variablesConfiguration);
-
+        return CodeTemplate(newCode, variablesConfiguration)
     }
 
-    private String getInsertPosition(List<LocalShortcutItem> shortCodeConfiguration, TemplateItem item, Integer prevIndex) throws JSONException {
-        Integer iTmp = 0;
-        String insertPosition = "";
-        Integer leftPreviousIndexes = prevIndex;
+    private fun getInsertPosition(shortCodeConfiguration: List<LocalShortcutItem>, item: TemplateItem, prevIndex: Int): String {
+        var iTmp = 0
+        var insertPosition = ""
+        var leftPreviousIndexes = prevIndex
         do {
-
-            leftPreviousIndexes--;
+            leftPreviousIndexes--
             if (leftPreviousIndexes < 0) {
-                break;
+                break
             }
-
-            LocalShortcutItem previousLocalShortcutItem = shortCodeConfiguration.get(leftPreviousIndexes);
-
-            TemplateItem prevItem = this.templateItems.get(previousLocalShortcutItem.getKey());
+            val previousLocalShortcutItem = shortCodeConfiguration[leftPreviousIndexes]
+            val prevItem = templateItems[previousLocalShortcutItem.key]
             if (prevItem != null) {
 //                System.out.println("Prev item:" + prevItem.getShortcut());
-
                 if (prevItem.hasTabs()) {
                     // detect in what place we need to insert our code
-                    HashMap<String, String[]> tabs = prevItem.getTabs();
-
-                    Iterator keys = tabs.keySet().iterator();
-
-                    Boolean detectPosition = false;
-
-
-                    if (!insertPosition.equals("")) {
-                        break;
+                    val tabs = prevItem.tabs
+                    val keys: Iterator<*> = tabs.keys.iterator()
+                    var detectPosition = false
+                    if (insertPosition != "") {
+                        break
                     }
-
                     while (keys.hasNext() && !detectPosition) {
-                        String tabIndex = (String) keys.next();
-                        String[] currentTabGroups = tabs.get(tabIndex);
-                        String itemGroup = item.getGroup();
-
-                        Integer tabGroupsLen = currentTabGroups.length;
+                        val tabIndex = keys.next() as String
+                        val currentTabGroups = tabs[tabIndex]
+                        val itemGroup = item.group
+                        val tabGroupsLen = currentTabGroups!!.size
                         if (tabGroupsLen == 0) {
-                            insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
+                            insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + leftPreviousIndexes + '_') + "$"
                         } else {
-                            for (String placeToGroup : currentTabGroups) {
-                                if (placeToGroup.equals(itemGroup)) {
-                                    insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + (leftPreviousIndexes) + '_') + "$";
-                                    detectPosition = true;
-                                    break;
+                            for (placeToGroup in currentTabGroups) {
+                                if (placeToGroup == itemGroup) {
+                                    insertPosition = "$" + tabIndex.replace("TAB", "TAB_" + leftPreviousIndexes + '_') + "$"
+                                    detectPosition = true
+                                    break
                                 }
                             }
                         }
-
                     }
-
                 }
             }
-            iTmp++;
-        } while (prevIndex > 0 && insertPosition.isEmpty() && iTmp < 50);
+            iTmp++
+        } while (prevIndex > 0 && insertPosition.isEmpty() && iTmp < 50)
         // default position is end
-
         if (insertPosition.isEmpty()) {
-            insertPosition = "$END$";
+            insertPosition = "\$END$"
         }
-        return insertPosition;
+        return insertPosition
     }
 
     /**
@@ -229,106 +176,75 @@ public class CodeBuilder implements CodeBuilderInterface {
      * e - LocalShortcutItem    empty
      * & - LocalShortcutItem    and
      * isf - LocalShortcutItem  is_file
-     * <p/>
-     * In this method we detect pars from string according to our configuration
      *
-     * @throws JSONException
+     * In this method we detect pars from string according to our configuration
      */
-    private List<LocalShortcutItem> getShortcutItems(String typedString, String filePath) throws JSONException {
-        List<LocalShortcutItem> shortcutsExpand = new ArrayList<>();
-
-        typedString = typedString.trim();
-
-        if (typedString.length() == 0) {
-            return shortcutsExpand;
+    private fun getShortcutItems(typedString: String, filePath: String): List<LocalShortcutItem> {
+        var typedString = typedString
+        val shortcutsExpand: MutableList<LocalShortcutItem> = ArrayList()
+        typedString = typedString.trim { it <= ' ' }
+        if (typedString.length == 0) {
+            return shortcutsExpand
         }
-
-        while (typedString.length() > 0) {
-            Boolean added = false;
-
-            for (int index = this.templateItems.size() - 1; index >= 0; index--) {
-                TemplateItem templateItem = this.templateItems.get(index);
-
-
-                if (!filePath.matches(templateItem.getFileRegex())) {
-                    continue;
-                }
-
-                typedString = typedString.trim();
-
-                String shortcut = templateItem.getShortcut();
-
-
-                if (templateItem.isRegex()) {
-
-                    String regex = "^" + shortcut + "(.*)$";
-                    Pattern pattern = null;
+        while (typedString.length > 0) {
+            var added = false
+            for (index in templateItems.indices.reversed()) {
+                val templateItem = templateItems[index]
+                typedString = typedString.trim { it <= ' ' }
+                val shortcut = templateItem.shortcut
+                if (templateItem.isRegex) {
+                    val regex = "^$shortcut(.*)$"
+                    var pattern: Pattern? = null
                     try {
-                        pattern = Pattern.compile(regex);
-                    } catch (PatternSyntaxException ex) {
-                        FastCoddyAppComponent.LOG.error("Invalid pattern:" + shortcut, "Error:" + ex.getMessage());
+                        pattern = Pattern.compile(regex)
+                    } catch (ex: PatternSyntaxException) {
+                        FastCoddyAppComponent.LOG.error("Invalid pattern:$shortcut", "Error:" + ex.message)
                     }
-
                     if (pattern == null) {
-                        continue;
+                        continue
                     }
-
-                    Matcher matcher = pattern.matcher(typedString);
-
+                    val matcher = pattern.matcher(typedString)
                     if (matcher.find()) {
-                        String expandToString = templateItem.getExpand();
-
-
-                        HashMap<String, String> regexReplace = templateItem.getRegexReplaces();
-
-                        int groupsNum = matcher.groupCount();
-
-                        for (int groupIndex = 1; groupIndex <= groupsNum; groupIndex++) {
-                            String groupString = matcher.group(groupIndex);
-
-
-                            groupString = (groupString != null) ? groupString : "";
-
-
+                        var expandToString = templateItem.expand
+                        val regexReplace = templateItem.regexReplaces
+                        val groupsNum = matcher.groupCount()
+                        for (groupIndex in 1..groupsNum) {
+                            var groupString = matcher.group(groupIndex)
+                            groupString = groupString ?: ""
                             if (groupIndex == groupsNum) {
-                                typedString = groupString;
+                                typedString = groupString
                             } else {
-
-                                String newGroupString = regexReplace.get(groupString);
+                                val newGroupString = regexReplace[groupString]
                                 if (newGroupString != null) {
-                                    groupString = newGroupString;
+                                    groupString = newGroupString
                                 }
-                                expandToString = expandToString.replaceAll("\\$" + groupIndex, groupString);
+                                expandToString = expandToString!!.replace("\\$" + groupIndex, groupString)
                             }
                         }
-
-                        LocalShortcutItem localShortcutItem = new LocalShortcutItem(index, expandToString, templateItem);
-                        shortcutsExpand.add(localShortcutItem);
-                        added = true;
-                        break;
+                        val localShortcutItem = LocalShortcutItem(index, expandToString, templateItem)
+                        shortcutsExpand.add(localShortcutItem)
+                        added = true
+                        break
                     }
-
-
-                } else if (typedString.indexOf(shortcut) == 0) {
-                    LocalShortcutItem localShortcutItem = new LocalShortcutItem(index, templateItem.getExpand(), templateItem);
-                    shortcutsExpand.add(localShortcutItem);
-                    typedString = typedString.substring(shortcut.length());
-
-                    added = true;
-                    break;
+                } else if (typedString.indexOf(shortcut!!) == 0) {
+                    val localShortcutItem = LocalShortcutItem(index, templateItem.expand, templateItem)
+                    shortcutsExpand.add(localShortcutItem)
+                    typedString = typedString.substring(shortcut.length)
+                    added = true
+                    break
                 }
             }
-
             if (!added) {
-                shortcutsExpand.clear();
-                return shortcutsExpand;
+                shortcutsExpand.clear()
+                return shortcutsExpand
             }
         }
-
-        return shortcutsExpand;
+        return shortcutsExpand
     }
 
-    public ArrayList<String> getDelimiters() {
-        return delimiters;
+    init {
+        templateItems = ArrayList()
+        delimiters = ArrayList()
+        loadConfigFromFile(filePath)
     }
 }

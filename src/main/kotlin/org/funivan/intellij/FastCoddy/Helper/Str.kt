@@ -1,15 +1,12 @@
-package org.funivan.intellij.FastCoddy.Helper;
+package org.funivan.intellij.FastCoddy.Helper
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-public class Str {
-
-    public static String plural(int num, String singular, String plural) {
-        if (num == 1) {
-            return Integer.toString(num) + ' ' + singular;
-        }
-        return Integer.toString(num) + ' ' + plural;
+object Str {
+    fun plural(num: Int, singular: String, plural: String): String {
+        return if (num == 1) {
+            Integer.toString(num) + ' ' + singular
+        } else Integer.toString(num) + ' ' + plural
     }
-
 }

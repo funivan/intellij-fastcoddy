@@ -1,80 +1,57 @@
-package org.funivan.intellij.FastCoddy.Productivity;
+package org.funivan.intellij.FastCoddy.Productivity
 
-import com.intellij.featureStatistics.FeatureUsageTracker;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.util.xmlb.XmlSerializerUtil;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.featureStatistics.FeatureUsageTracker
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.util.xmlb.XmlSerializerUtil
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-@State(
-    name = "CoddyUsageStatistic",
-    storages = {
-        @Storage("fast-coddy.statistics.xml")
-    }
-)
-public class UsageStatistic implements PersistentStateComponent<UsageStatistic> {
-
-    public Integer used = 0;
-
-    public Integer maximumShortCodes = 0;
-
-    public Integer usedShortCodes = 0;
-
-    public Integer typedChars = 0;
-
-    public Integer expandedChars = 0;
-
-    private long firstStart = 0;
-
-    public static void used() {
-        FeatureUsageTracker.getInstance().triggerFeatureUsed(TemplatesProductivityFeatureProvider.LIVE_TEMPLATE_INVOKE);
-
-        UsageStatistic.getSettings().used++;
+@State(name = "CoddyUsageStatistic", storages = [Storage("fast-coddy.statistics.xml")])
+class UsageStatistic : PersistentStateComponent<UsageStatistic?> {
+    var used = 0
+    var maximumShortCodes: Int = 0
+    var usedShortCodes: Int = 0
+    var typedChars = 0
+    var expandedChars = 0
+    private var firstStart: Long = 0
+    override fun getState(): UsageStatistic? {
+        if (firstStart == 0L) {
+            firstStart = System.currentTimeMillis()
+        }
+        return this
     }
 
-    public static void usedShortCodes(Integer shortCodesNum) {
-        UsageStatistic statistic = UsageStatistic.getSettings();
-
-        if (shortCodesNum > statistic.maximumShortCodes) {
-            statistic.maximumShortCodes = shortCodesNum;
+    companion object {
+        fun used() {
+            FeatureUsageTracker.getInstance().triggerFeatureUsed(TemplatesProductivityFeatureProvider.Companion.LIVE_TEMPLATE_INVOKE)
+            settings.used++
         }
 
-        statistic.usedShortCodes += shortCodesNum;
-    }
-
-
-    public static void typedChars(Integer charsNum) {
-        UsageStatistic.getSettings().typedChars += charsNum;
-    }
-
-    public static void expandedChars(Integer charsNum) {
-        UsageStatistic.getSettings().expandedChars += charsNum;
-    }
-
-
-    @Nullable
-    @Override
-    public UsageStatistic getState() {
-
-        if (firstStart == 0) {
-            firstStart = System.currentTimeMillis();
+        fun usedShortCodes(shortCodesNum: Int?) {
+            val statistic = settings
+            if (shortCodesNum!! > statistic.maximumShortCodes!!) {
+                statistic.maximumShortCodes = shortCodesNum
+            }
+            statistic.usedShortCodes += shortCodesNum
         }
-        return this;
+
+        fun typedChars(charsNum: Int) {
+            settings.typedChars += charsNum
+        }
+
+        fun expandedChars(charsNum: Int) {
+            settings.expandedChars += charsNum
+        }
+
+        val settings: UsageStatistic
+            get() = ServiceManager.getService(UsageStatistic::class.java)
     }
 
-    public static UsageStatistic getSettings() {
-        return ServiceManager.getService(UsageStatistic.class);
+    override fun loadState(state: UsageStatistic) {
+        XmlSerializerUtil.copyBean(state, this)
     }
-
-    @Override
-    public void loadState(UsageStatistic settings) {
-        XmlSerializerUtil.copyBean(settings, this);
-    }
-
 }
-

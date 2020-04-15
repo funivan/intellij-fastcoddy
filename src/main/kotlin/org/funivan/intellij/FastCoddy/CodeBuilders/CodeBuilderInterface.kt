@@ -1,15 +1,10 @@
-package org.funivan.intellij.FastCoddy.CodeBuilders;
+package org.funivan.intellij.FastCoddy.CodeBuilders
 
-import com.intellij.psi.PsiFile;
-
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiFile
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-interface CodeBuilderInterface {
-
-    CodeTemplate expandCodeFromShortcut(String shortcut, PsiFile psiFile);
-
-
+internal interface CodeBuilderInterface {
+    fun expandCodeFromShortcut(shortcut: String, psiFile: PsiFile?): CodeTemplate?
 }

@@ -1,131 +1,87 @@
-package org.funivan.intellij.FastCoddy.CodeBuilders;
+package org.funivan.intellij.FastCoddy.CodeBuilders
 
-import com.intellij.codeInsight.template.CustomLiveTemplate;
-import com.intellij.codeInsight.template.CustomTemplateCallback;
-import com.intellij.codeInsight.template.LiveTemplateBuilder;
-import com.intellij.codeInsight.template.impl.TemplateImpl;
-import com.intellij.psi.PsiFile;
-import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.intellij.codeInsight.template.CustomLiveTemplate
+import com.intellij.codeInsight.template.CustomTemplateCallback
+import com.intellij.codeInsight.template.LiveTemplateBuilder
+import com.intellij.codeInsight.template.impl.TemplateImpl
+import com.intellij.codeInsight.template.impl.TemplateSettings
+import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration
+import java.util.*
+import java.util.regex.Pattern
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-public class IntellijLiveTemplate implements CustomLiveTemplate {
-
-    private CodeTemplate codeTemplateConfigurationTemplate;
-
-    public IntellijLiveTemplate(CodeTemplate codeTemplateConfigurationTemplate) {
-        this.codeTemplateConfigurationTemplate = codeTemplateConfigurationTemplate;
+class IntellijLiveTemplate(private val codeTemplateConfigurationTemplate: CodeTemplate) : CustomLiveTemplate {
+    override fun computeTemplateKey(customTemplateCallback: CustomTemplateCallback): String? {
+        return null
     }
 
-    @Nullable
-    public String computeTemplateKey(@NotNull CustomTemplateCallback customTemplateCallback) {
-        return null;
+    override fun isApplicable(customTemplateCallback: CustomTemplateCallback, i: Int, b: Boolean): Boolean {
+        return false
     }
 
-    @java.lang.Override
-    public boolean isApplicable(@NotNull CustomTemplateCallback customTemplateCallback, int i, boolean b) {
-        return false;
+    override fun supportsWrapping(): Boolean {
+        return false
     }
 
-    public boolean isApplicable(PsiFile psiFile, int i, boolean b) {
-        return false;
+    fun expandTemplate(callback: CustomTemplateCallback) {
+        expand(codeTemplateConfigurationTemplate.code, callback)
     }
 
-    @Override
-    public boolean supportsWrapping() {
-        return false;
-    }
+    override fun expand(code: String, customTemplateCallback: CustomTemplateCallback) {
+        var result = code
 
-    public void expandTemplate(@NotNull CustomTemplateCallback callback) {
-        if (codeTemplateConfigurationTemplate != null) {
-            this.expand(codeTemplateConfigurationTemplate.getCode(), callback);
-        }
-    }
+        result = result.replace("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$".toRegex(), "__$1__")
+        result = result.replace("$", "$$")
+        result = result.replace("__(TAB[0-9_]+|VAR_[0-9_A-Z]+)__".toRegex(), "\\$$1\\$")
+        val template = TemplateImpl("", result, "")
+        template.isToReformat = true
+        template.isToIndent = true
+        val variableTabMatch = Pattern.compile("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$").matcher(result)
+        val variableNamesList = mutableListOf<String>()
 
-    @Override
-    public void expand(@NotNull String code, @NotNull CustomTemplateCallback customTemplateCallback) {
-
-        LinkedHashMap<String, VariableConfiguration> variables = codeTemplateConfigurationTemplate.getVariablesConfiguration();
-        code = code.replaceAll("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$", "__$1__");
-        code = code.replace("$", "$$");
-        code = code.replaceAll("__(TAB[0-9_]+|VAR_[0-9_A-Z]+)__", "\\$$1\\$");
-
-
-        TemplateImpl template = new TemplateImpl("", code, "");
-        template.setToReformat(true);
-        template.setToIndent(true);
-
-        Matcher variableTabMatch = Pattern.compile("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$").matcher(code);
-        List<String> variableNamesList = new ArrayList<>();
-
-        // Find all variables to the
+        // Find all variables
         while (variableTabMatch.find()) {
-            String variableName = variableTabMatch.group(1);
-
-            if (variableNamesList.contains(variableName)) {
-                continue;
+            val variableName = variableTabMatch.group(1)
+            if (!variableNamesList.contains(variableName)) {
+                variableNamesList.add(variableName)
             }
-
-            variableNamesList.add(variableName);
         }
+        val addedVariableNames: MutableList<String?> = ArrayList()
 
-        List<String> addedVariableNames = new ArrayList<>();
-
+        val variables = codeTemplateConfigurationTemplate.variablesConfiguration
         // Add variables to the template in the order defined inside our configuration
-        for (String variableName : variables.keySet()) {
-            if (addedVariableNames.contains(variableName)) {
-                continue;
-            }
-            if (variableNamesList.contains(variableName)) {
-                VariableConfiguration variableConfiguration = variables.get(variableName);
-                template.addVariable(variableName, variableConfiguration.getExpression(), variableConfiguration.getDefaultValue(), variableConfiguration.getAlwaysStopAt());
-                addedVariableNames.add(variableName);
+        for (variableName in variables.keys) {
+            if (!addedVariableNames.contains(variableName)) {
+                if (variableNamesList.contains(variableName)) {
+                    val variableConfiguration = variables[variableName] as VariableConfiguration
+                    template.addVariable(variableName, variableConfiguration.expression, variableConfiguration.defaultValue, variableConfiguration.alwaysStopAt)
+                    addedVariableNames.add(variableName)
+                }
             }
         }
 
         // Add other not defined variables according to the position inside the template
-        for (String variableName : variableNamesList) {
-            if (addedVariableNames.contains(variableName)) {
-                continue;
+        for (variableName in variableNamesList) {
+            if (!addedVariableNames.contains(variableName)) {
+                template.addVariable(variableName, "", "", true)
+                addedVariableNames.add(variableName)
             }
-            template.addVariable(variableName, "", "", true);
-            addedVariableNames.add(variableName);
         }
-
-
-        LiveTemplateBuilder builder = new LiveTemplateBuilder();
-
-
-        builder.insertTemplate(0, template, null);
-        TemplateImpl templateComplete = builder.buildTemplate();
-
-        customTemplateCallback.startTemplate(templateComplete, null, null);
+        val builder = LiveTemplateBuilder()
+        builder.insertTemplate(0, template, null)
+        val templateComplete = builder.buildTemplate()
+        customTemplateCallback.startTemplate(templateComplete, null, null)
     }
 
-    @Override
-    public void wrap(@NotNull String s, @NotNull CustomTemplateCallback customTemplateCallback) {
-
+    override fun wrap(s: String, customTemplateCallback: CustomTemplateCallback) {}
+    override fun getTitle(): String {
+        return "customTemplate"
     }
 
-    @NotNull
-    @Override
-    public String getTitle() {
-        return "customTemplate";
+    override fun getShortcut(): Char {
+        return TemplateSettings.TAB_CHAR
     }
-
-    @Override
-    public char getShortcut() {
-        return 0;
-    }
-
 
 }

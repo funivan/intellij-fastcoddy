@@ -1,74 +1,59 @@
-package org.funivan.intellij.FastCoddy.Productivity;
+package org.funivan.intellij.FastCoddy.Productivity
 
-import com.intellij.featureStatistics.ApplicabilityFilter;
-import com.intellij.featureStatistics.FeatureDescriptor;
-import com.intellij.featureStatistics.GroupDescriptor;
-import com.intellij.featureStatistics.ProductivityFeaturesProvider;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.featureStatistics.ApplicabilityFilter
+import com.intellij.featureStatistics.FeatureDescriptor
+import com.intellij.featureStatistics.GroupDescriptor
+import com.intellij.featureStatistics.ProductivityFeaturesProvider
+import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.project.Project
+import java.util.*
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-public class TemplatesProductivityFeatureProvider extends ProductivityFeaturesProvider implements com.intellij.openapi.components.ApplicationComponent {
-
-    private static final String GROUP_DESCRIPTOR_ID = "fast-coddy.feature";
-
-    static final String LIVE_TEMPLATE_INVOKE = "fast-coddy.template.invoke";
-
-
-    private FeatureDescriptor[] descriptors;
-
-    public void disposeComponent() {
+class TemplatesProductivityFeatureProvider : ProductivityFeaturesProvider(), ApplicationComponent {
+    private var descriptors: Array<FeatureDescriptor> = arrayOf()
+    override fun disposeComponent() {}
+    override fun getComponentName(): String {
+        return "TemplatesProductivityFeatureProvider"
     }
 
-    @NotNull
-    public String getComponentName() {
-        return "TemplatesProductivityFeatureProvider";
+    override fun initComponent() {
+        val list: MutableList<FeatureDescriptor> = ArrayList()
+        list.add(createFeatureDescriptor())
+        descriptors = list.toTypedArray()
     }
 
-    public void initComponent() {
-
-        List<FeatureDescriptor> list = new ArrayList<>();
-        list.add(createFeatureDescriptor());
-
-
-        descriptors = list.toArray(new FeatureDescriptor[list.size()]);
-    }
-
-
-    @NotNull
-    private FeatureDescriptor createFeatureDescriptor() {
-        return new FeatureDescriptor(TemplatesProductivityFeatureProvider.LIVE_TEMPLATE_INVOKE, GROUP_DESCRIPTOR_ID, "TemplateInvoke.html",
+    private fun createFeatureDescriptor(): FeatureDescriptor {
+        return FeatureDescriptor(LIVE_TEMPLATE_INVOKE, GROUP_DESCRIPTOR_ID, "TemplateInvoke.html",
                 "Expand template",
-                0, 1, null, 1, this);
+                0, 1, null, 1, this)
     }
 
-    public FeatureDescriptor[] getFeatureDescriptors() {
-        return descriptors;
+    override fun getFeatureDescriptors(): Array<FeatureDescriptor> {
+        return descriptors
     }
 
-    public GroupDescriptor[] getGroupDescriptors() {
-        return new GroupDescriptor[]{new GroupDescriptor(GROUP_DESCRIPTOR_ID, "FastCoddy")};
+    override fun getGroupDescriptors(): Array<GroupDescriptor> {
+        return arrayOf(GroupDescriptor(GROUP_DESCRIPTOR_ID, "FastCoddy"))
     }
 
-    public ApplicabilityFilter[] getApplicabilityFilters() {
-        return new ApplicabilityFilter[]{
-                new ApplicabilityFilter() {
-                    public String getPrefix() {
-                        return GROUP_DESCRIPTOR_ID;
+    override fun getApplicabilityFilters(): Array<ApplicabilityFilter> {
+        return arrayOf(
+                object : ApplicabilityFilter {
+                    override fun getPrefix(): String {
+                        return GROUP_DESCRIPTOR_ID
                     }
 
-                    public boolean isApplicable(String string, Project project) {
-                        return true;
+                    override fun isApplicable(string: String, project: Project): Boolean {
+                        return true
                     }
                 }
-        };
+        )
     }
 
-
+    companion object {
+        private const val GROUP_DESCRIPTOR_ID = "fast-coddy.feature"
+        const val LIVE_TEMPLATE_INVOKE = "fast-coddy.template.invoke"
+    }
 }
-

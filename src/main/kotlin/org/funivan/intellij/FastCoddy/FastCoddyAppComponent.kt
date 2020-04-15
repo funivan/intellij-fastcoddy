@@ -1,126 +1,98 @@
-package org.funivan.intellij.FastCoddy;
+package org.funivan.intellij.FastCoddy
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.containers.HashMap;
-import org.codehaus.jettison.json.JSONException;
-import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilder;
-import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandInterface;
-import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandProcessor;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Map;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.diagnostic.Logger
+import org.codehaus.jettison.json.JSONException
+import org.funivan.intellij.FastCoddy.CodeBuilders.CodeBuilder
+import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandInterface
+import org.funivan.intellij.FastCoddy.LanguageProcessor.CodeExpandProcessor
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
-public class FastCoddyAppComponent implements ApplicationComponent {
-
-    final public static Logger LOG = Logger.getInstance("Symfony-Plugin");
-    private static final String DEFAULT_FULL_PATH = PathManager.getConfigPath() + "/fast-coddy";
-
-    private Map<String, CodeExpandInterface> codeExpands = null;
-
-    public static FastCoddyAppComponent getInstance() {
-        return ApplicationManager.getApplication().getComponent(FastCoddyAppComponent.class);
-    }
+class FastCoddyAppComponent : ApplicationComponent {
+    private var codeExpands: MutableMap<String?, CodeExpandInterface?>? = null
 
     /**
      * On first initialization copy default template files
      */
-    private void copyTemplateFiles(Boolean forceRewrite) throws IOException {
-        File defaultDir = new File(DEFAULT_FULL_PATH);
+    @Throws(IOException::class)
+    private fun copyTemplateFiles(forceRewrite: Boolean) {
+        val defaultDir = File(DEFAULT_FULL_PATH)
         if (!defaultDir.exists()) {
             if (!defaultDir.mkdir()) {
-                throw new IOException("Can not create configuration directory");
+                throw IOException("Can not create configuration directory")
             }
         }
-
         if (!defaultDir.exists()) {
-            return;
+            return
         }
-
-        copyTemplate(forceRewrite, "php.json");
-        copyTemplate(forceRewrite, "javascript.json");
-        copyTemplate(forceRewrite, "xml.json");
-
+        copyTemplate(forceRewrite, "php.json")
+        copyTemplate(forceRewrite, "javascript.json")
+        copyTemplate(forceRewrite, "xml.json")
     }
 
-    private void copyTemplate(Boolean forceRewrite, String fileName) {
-        InputStream is = FastCoddyAppComponent.class.getClassLoader().getResourceAsStream(fileName);
-
-        File destinationFile = new File(DEFAULT_FULL_PATH + "/" + fileName);
-        if (is == null) {
-            System.out.println("fs is null");
-            return;
+    private fun copyTemplate(forceRewrite: Boolean, fileName: String) {
+        val `is` = FastCoddyAppComponent::class.java.classLoader.getResourceAsStream(fileName)
+        val destinationFile = File("$DEFAULT_FULL_PATH/$fileName")
+        if (`is` == null) {
+            println("fs is null")
+            return
         }
-        if (destinationFile.isFile() && !forceRewrite) {
-            return;
+        if (destinationFile.isFile && !forceRewrite) {
+            return
         }
-
         try {
-            Files.copy(is, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
+            Files.copy(`is`, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
-    @Override
-    public void initComponent() {
+    override fun initComponent() {
         try {
-            copyTemplateFiles(false);
-        } catch (IOException e) {
-            e.printStackTrace();
+            copyTemplateFiles(false)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
-    @Override
-    public void disposeComponent() {
-
+    override fun disposeComponent() {}
+    override fun getComponentName(): String {
+        return "FastCoddyAppComponent"
     }
 
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "FastCoddyAppComponent";
-    }
-
-    public void flushConfiguration() {
-        this.codeExpands = null;
+    fun flushConfiguration() {
+        codeExpands = null
     }
 
     /**
      * Load code expands
      */
-    public Map<String, CodeExpandInterface> getCodeExpand() throws JSONException {
-
-        if (this.codeExpands == null) {
-            String dir = PathManager.getConfigPath() + "/fast-coddy";
-
-            codeExpands = new HashMap<>();
-
-            CodeBuilder phpCodeBuilder = new CodeBuilder(dir + "/php.json");
-            codeExpands.put("PHP", new CodeExpandProcessor(phpCodeBuilder));
-
-
-            CodeBuilder xmlCodeBuilder = new CodeBuilder(dir + "/xml.json");
-            codeExpands.put("XML", new CodeExpandProcessor(xmlCodeBuilder));
-
-
-            CodeBuilder javascriptCodeBuilder = new CodeBuilder(dir + "/javascript.json");
-            codeExpands.put("JavaScript", new CodeExpandProcessor(javascriptCodeBuilder));
-
-
+    @get:Throws(JSONException::class)
+    val codeExpand: Map<String?, CodeExpandInterface?>?
+        get() {
+            if (codeExpands == null) {
+                val dir = PathManager.getConfigPath() + "/fast-coddy"
+                codeExpands = hashMapOf(
+                        "PHP" to CodeExpandProcessor(CodeBuilder("$dir/php.json")),
+                        "XML" to CodeExpandProcessor(CodeBuilder("$dir/xml.json")),
+                        "JavaScript" to CodeExpandProcessor(CodeBuilder("$dir/javascript.json"))
+                )
+            }
+            return codeExpands
         }
 
-        return this.codeExpands;
+    companion object {
+        val LOG = Logger.getInstance("FastCoddy-Plugin")
+        private val DEFAULT_FULL_PATH = PathManager.getConfigPath() + "/fast-coddy"
+        val instance: FastCoddyAppComponent
+            get() = ApplicationManager.getApplication().getComponent(FastCoddyAppComponent::class.java)
     }
-
 }
