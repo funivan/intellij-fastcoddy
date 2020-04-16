@@ -102,14 +102,12 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
                 newCode = newCode.replace(insertPosition, shortcutTpl + insertPosition)
                 insertedTabs.add(insertPosition)
             }
-
-
             // refresh end position
-            newCode = newCode.replace(Regex("\$END\$"), "")
-            newCode += "\$END$"
+            newCode = newCode.replace("\$END\$", "")
+            newCode += "\$END\$"
         }
-        newCode = newCode.replace(Regex("\$LAST\$"), "")
-        newCode = newCode.replace(Regex("\$END\$"), "")
+        newCode = newCode.replace("\$LAST\$", "")
+        newCode = newCode.replace("\$END\$", "")
         newCode = newCode.replace(Regex("(\$TAB_[0-9]+_[0-9]+\\$)+"), "$1")
 
 

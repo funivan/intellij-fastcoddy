@@ -41,6 +41,8 @@ intellij {
     updateSinceUntilBuild = false
     pluginName = name
     setPlugins(
+            "com.jetbrains.php:193.5233.102",
+            "CSS",
             "java",
             "java-i18n",
             "properties"
