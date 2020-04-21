@@ -6,5 +6,5 @@ import com.intellij.psi.PsiFile
  * @author Ivan Shcherbak <alotofall@gmail.com>
  */
 internal interface CodeBuilderInterface {
-    fun expandCodeFromShortcut(shortcut: String, psiFile: PsiFile?): CodeTemplate?
+    fun expandCodeFromShortcut(shortcut: String): CodeTemplate?
 }

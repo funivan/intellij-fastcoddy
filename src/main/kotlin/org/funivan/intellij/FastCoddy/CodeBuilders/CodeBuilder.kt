@@ -21,16 +21,11 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
     /**
      * Return new code string
      */
-    override fun expandCodeFromShortcut(shortcut: String, psiFile: PsiFile?): CodeTemplate? {
-        var newCodeTemplate: CodeTemplate? = null
-        try {
-            val list = getShortcutItems(shortcut)
-            newCodeTemplate = getNewCode(list)
-            newCodeTemplate.initialString = shortcut
-            newCodeTemplate.usedShortCodesNum = list.size
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
+    override fun expandCodeFromShortcut(shortcut: String): CodeTemplate? {
+        val list = getShortcutItems(shortcut)
+        val newCodeTemplate = getNewCode(list)
+        newCodeTemplate.initialString = shortcut
+        newCodeTemplate.usedShortCodesNum = list.size
         return newCodeTemplate
     }
 
@@ -188,15 +183,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
                 val shortcut = templateItem.shortcut
                 if (templateItem.isRegex) {
                     val regex = "^$shortcut(.*)$"
-                    var pattern: Pattern? = null
-                    try {
-                        pattern = Pattern.compile(regex)
-                    } catch (ex: PatternSyntaxException) {
-                        FastCoddyAppComponent.LOG.error("Invalid pattern:$shortcut", "Error:" + ex.message)
-                    }
-                    if (pattern == null) {
-                        continue
-                    }
+                    var pattern: Pattern = Pattern.compile(regex)
                     val matcher = pattern.matcher(typedStr)
                     if (matcher.find()) {
                         var expandToString = templateItem.expand
@@ -212,7 +199,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
                                 if (newGroupString != null) {
                                     groupString = newGroupString
                                 }
-                                expandToString = expandToString.replace("\\$" + groupIndex, groupString)
+                                expandToString = expandToString.replace("$" + groupIndex, groupString)
                             }
                         }
                         val localShortcutItem = LocalShortcutItem(index, expandToString, templateItem)
