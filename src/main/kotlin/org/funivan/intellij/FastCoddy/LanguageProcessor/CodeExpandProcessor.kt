@@ -13,11 +13,10 @@ class CodeExpandProcessor(private val codeBuilder: CodeBuilder) : CodeExpandInte
 
     override fun getCode(anActionEvent: AnActionEvent): CodeTemplate? {
         val shortCode = detectShortCode(anActionEvent)
-        if (shortCode == null || shortCode.isEmpty()) {
-            return null
+        if (shortCode != null && !shortCode.isEmpty()) {
+            return codeBuilder.expandCodeFromShortcut(shortCode)
         }
-        val psiFile = CommonDataKeys.PSI_FILE.getData(anActionEvent.dataContext)
-        return codeBuilder.expandCodeFromShortcut(shortCode, psiFile)
+        return null
     }
 
     /**
