@@ -32,13 +32,13 @@ class IntellijLiveTemplate(private val codeTemplateConfigurationTemplate: CodeTe
     override fun expand(code: String, customTemplateCallback: CustomTemplateCallback) {
         var result = code
 
-        result = result.replace("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$".toRegex(), "__$1__")
+        result = result.replace(Regex("\\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\\$"), "__$1__")
         result = result.replace("$", "$$")
-        result = result.replace("__(TAB[0-9_]+|VAR_[0-9_A-Z]+)__".toRegex(), "\\$$1\\$")
+        result = result.replace(Regex("__(TAB[0-9_]+|VAR_[0-9_A-Z]+)__"), "\\\$$1\\\$")
         val template = TemplateImpl("", result, "")
         template.isToReformat = true
         template.isToIndent = true
-        val variableTabMatch = Pattern.compile("\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\$").matcher(result)
+        val variableTabMatch = Pattern.compile("\\\$(TAB[0-9_]+|VAR_[0-9_A-Z]+)\\\$").matcher(result)
         val variableNamesList = mutableListOf<String>()
 
         // Find all variables

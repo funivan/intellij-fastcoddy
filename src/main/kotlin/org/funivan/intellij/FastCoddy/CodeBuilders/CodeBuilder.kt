@@ -1,15 +1,12 @@
 package org.funivan.intellij.FastCoddy.CodeBuilders
 
-import com.intellij.psi.PsiFile
 import org.codehaus.jettison.json.JSONException
 import org.codehaus.jettison.json.JSONObject
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.TemplateItem
 import org.funivan.intellij.FastCoddy.CodeBuilders.Configuration.VariableConfiguration
-import org.funivan.intellij.FastCoddy.FastCoddyAppComponent
 import org.funivan.intellij.FastCoddy.Helper.FileHelper
 import java.util.*
 import java.util.regex.Pattern
-import java.util.regex.PatternSyntaxException
 
 /**
  * @author Ivan Shcherbak <alotofall@gmail.com>
@@ -89,7 +86,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
             variables.forEach { key, value -> variablesConfiguration[key] = value }
 
             // prepare new template
-            shortcutTpl = shortcutTpl.replace("\$TAB([0-9]+)\\$".toRegex(), "\$TAB_" + index + "_$1\\$")
+            shortcutTpl = shortcutTpl.replace(Regex("\\\$TAB([0-9]+)\\\$"), "\\\$TAB_" + index + "_$1\\\$")
             if (newCode.isEmpty() || index == 0) {
                 newCode = shortcutTpl
             } else {
@@ -103,8 +100,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
         }
         newCode = newCode.replace("\$LAST\$", "")
         newCode = newCode.replace("\$END\$", "")
-        newCode = newCode.replace(Regex("(\$TAB_[0-9]+_[0-9]+\\$)+"), "$1")
-
+        newCode = newCode.replace(Regex("(\\\$TAB_[0-9]+_[0-9]+\\\$)+"), "$1")
 
         // remove previous inserted positions
         for (tabId in insertedTabs) {
@@ -183,8 +179,7 @@ class CodeBuilder(filePath: String) : CodeBuilderInterface {
                 val shortcut = templateItem.shortcut
                 if (templateItem.isRegex) {
                     val regex = "^$shortcut(.*)$"
-                    var pattern: Pattern = Pattern.compile(regex)
-                    val matcher = pattern.matcher(typedStr)
+                    val matcher = Pattern.compile(regex).matcher(typedStr)
                     if (matcher.find()) {
                         var expandToString = templateItem.expand
                         val regexReplace = templateItem.regexReplaces
