@@ -12,13 +12,13 @@
 
     <actions>
         <action id="FastCoddy.Expand" class="org.funivan.intellij.FastCoddy.LanguageProcessor.ExpandAction"
-                text="Expand code"
+                text="Expand Code"
                 description="Expand smart short code">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="control BACK_SLASH"/>
         </action>
         <action id="FastCoddy.ReloadConfiguration" class="org.funivan.intellij.FastCoddy.Actions.ReloadAction"
-                text="Reload FastCoddy plugin"
+                text="Reload FastCoddy Plugin"
                 description="Reload FastCoddy plugin configuration ">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
@@ -29,14 +29,7 @@
                 implementation="org.funivan.intellij.FastCoddy.Productivity.TemplatesProductivityFeatureProvider"/>
         <applicationService serviceImplementation="org.funivan.intellij.FastCoddy.Productivity.UsageStatistic"/>
 
-        <tipAndTrick file="TemplateInvoke.html"/>
-
-        <!--- General plugin settings -->
-        <applicationConfigurable instance="org.funivan.intellij.FastCoddy.Settings.PluginSettingsForm"
-                                 id="FastCoddy.General.SettingsForm"
-                                 displayName="FastCoddy Plugin"/>
     </extensions>
-
 
     <application-components>
         <component>

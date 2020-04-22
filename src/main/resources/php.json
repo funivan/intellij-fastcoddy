@@ -45,11 +45,6 @@
        */
       "vars": {
       },
-      /**
-       * According to this regex you can use different shortcuts in different files
-       *
-       */
-      "fileRegex": ""
     },
     {
       "group": "variable_handling",
